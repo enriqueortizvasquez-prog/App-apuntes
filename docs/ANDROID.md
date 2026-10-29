@@ -55,7 +55,7 @@ Usa el repositorio completo o el archivo **Source code (zip)** de GitHub para co
 
 Para repetirlo localmente hace falta JDK 17, Android SDK 35, Gradle 8.11.1 y un emulador/dispositivo. No se incluyen SDK, APK, claves privadas ni archivos generados en el código Git.
 
-Las pruebas del emulador no sustituyen probarlo en tu modelo de celular. Los avisos con la app cerrada no se ofrecen. La base de datos remota/RLS sí se comprobó; el inicio Google y la colaboración con dos cuentas reales siguen pendientes.
+Las pruebas del emulador no sustituyen probarlo en tu modelo de celular. Los avisos con la app cerrada no se ofrecen. La base de datos remota/RLS y el primer inicio Google en celular se comprobaron; la colaboración con dos cuentas reales sigue pendiente.
 
 ## Verificación de esta descarga
 
@@ -67,7 +67,7 @@ La ejecución [40944333232](https://github.com/enriqueortizvasquez-prog/App-apun
 
 [Descargar APK 1.2](https://github.com/enriqueortizvasquez-prog/App-apuntes/releases/download/v1.2.0-beta/apuntes-android-v1.2.0-beta.apk): 1.251.238 bytes. SHA256 informado por GitHub para el archivo publicado: `b78dd8c8f350aab07f8c7dbef37372fe2403061cb01b295b643c8280a6ddf0cc`. Release pública no borrador, beta e inmutable. No se modificó la descarga anterior.
 
-**Esto no prueba el consentimiento de una cuenta Google real.** El proveedor sigue pendiente de configurar por el propietario; el APK comprueba ese estado y no simula un acceso. No publiques el secreto OAuth ni desactives la verificación de identidad.
+**Estas pruebas automatizadas no prueban el consentimiento de una cuenta Google real.** Por separado, el propietario ya configuró el proveedor y confirmó un acceso real en su celular. No publiques el secreto OAuth ni desactives la verificación de identidad.
 
 ## Cambio de nombre: Tareas 1.3
 
@@ -79,7 +79,7 @@ La publicación 1.3 superó sus propias pruebas; la descarga 1.2 no se modifica.
 
 Resultado: [Actions 40951528171](https://github.com/enriqueortizvasquez-prog/App-apuntes/actions/runs/40951528171), revisión `03fb4751da78d6088ff13ae628329ba61a7dba8b`, **SUCCESS**, 4 min 43 s. Pasaron las 16 pruebas unitarias/PGlite, la suite web con los 20 colores y las cuatro pruebas Android (incluidas etiqueta Tareas, selección del color nuevo, respaldo, importación y retorno OAuth). Firma verificada antes de publicar.
 
-[Descargar Tareas 1.3 APK](https://github.com/enriqueortizvasquez-prog/App-apuntes/releases/download/v1.3.0-beta/tareas-android-v1.3.0-beta.apk), 1.251.754 bytes, SHA256 de GitHub `11ed80036ebffa63494006bcc0e3521b8124d76039a566ad42a87d24dd60a30d`. Release pública y no borrador. El proveedor Google real sigue pendiente de configurar.
+[Descargar Tareas 1.3 APK](https://github.com/enriqueortizvasquez-prog/App-apuntes/releases/download/v1.3.0-beta/tareas-android-v1.3.0-beta.apk), 1.251.754 bytes, SHA256 de GitHub `11ed80036ebffa63494006bcc0e3521b8124d76039a566ad42a87d24dd60a30d`. Release pública y no borrador. Al publicar 1.3, el proveedor Google aún estaba pendiente; posteriormente se configuró y se confirmó un acceso real.
 
 ## Actualización: primer acceso físico confirmado
 
@@ -98,7 +98,7 @@ Si WhatsApp deja el enlace como texto:
 
 El receptor debe tener 1.4 para esta opción; las invitaciones de 1.3 siguen siendo válidas mientras no caduquen/se revoquen. No se cambiaron los permisos ni el servidor. No se asegura que WhatsApp convierta enlaces `apuntes://` en clicables: la solución no depende de ello. Los mensajes nuevos incluyen instrucciones. El texto completo se borra del campo al mostrar una vista previa válida y no se persiste ni envía al servidor; solo se consulta el token de una invitación colaborativa. No hay lectura automática del portapapeles.
 
-Antes de cambiar de APK beta, exporta respaldo; una firma diferente puede obligar a desinstalar la anterior. La publicación 1.4 requiere su propia prueba Android; no reemplaza la descarga 1.3. El primer inicio Google en celular ya está confirmado, pero la aceptación y sincronización entre dos cuentas reales sigue pendiente.
+Antes de cambiar de APK beta, exporta respaldo; una firma diferente puede obligar a desinstalar la anterior. La publicación 1.4 superó su propia prueba Android; no reemplaza la descarga 1.3. El primer inicio Google en celular ya está confirmado, pero la aceptación y sincronización entre dos cuentas reales sigue pendiente.
 
 ### Publicación 1.4 verificada
 
