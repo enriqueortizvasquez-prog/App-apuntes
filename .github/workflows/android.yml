@@ -28,7 +28,7 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run build && npm run android:assets
-      - run: bash scripts/ci-report.sh sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+      - run: bash scripts/ci-report.sh bash scripts/android-sdk.sh
       - run: bash scripts/ci-report.sh gradle -p android :app:assembleDebug :app:assembleDebugAndroidTest --stacktrace
       - name: Habilitar aceleración del emulador
         run: |
