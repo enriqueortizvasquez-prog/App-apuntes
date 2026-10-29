@@ -80,3 +80,7 @@ La publicación 1.3 superó sus propias pruebas; la descarga 1.2 no se modifica.
 Resultado: [Actions 40951528171](https://github.com/enriqueortizvasquez-prog/App-apuntes/actions/runs/40951528171), revisión `03fb4751da78d6088ff13ae628329ba61a7dba8b`, **SUCCESS**, 4 min 43 s. Pasaron las 16 pruebas unitarias/PGlite, la suite web con los 20 colores y las cuatro pruebas Android (incluidas etiqueta Tareas, selección del color nuevo, respaldo, importación y retorno OAuth). Firma verificada antes de publicar.
 
 [Descargar Tareas 1.3 APK](https://github.com/enriqueortizvasquez-prog/App-apuntes/releases/download/v1.3.0-beta/tareas-android-v1.3.0-beta.apk), 1.251.754 bytes, SHA256 de GitHub `11ed80036ebffa63494006bcc0e3521b8124d76039a566ad42a87d24dd60a30d`. Release pública y no borrador. El proveedor Google real sigue pendiente de configurar.
+
+## Actualización: primer acceso físico confirmado
+
+El 29 de octubre de 2026 el propietario confirmó en Tareas 1.3 instalada en su celular el retorno de Google y «Sesión iniciada». Se comprobó por consulta agregada en el servidor **1 identidad Google con correo confirmado**, sin leer secretos ni tokens. Los comentarios anteriores sobre proveedor pendiente describen el estado al construir/publicar las betas. Actualmente falta probar invitación, sincronización y progreso con dos cuentas reales; el primer acceso ya no está pendiente. No se necesita reconstruir ni sustituir el APK por activar el proveedor.

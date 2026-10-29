@@ -1,6 +1,6 @@
 # Activar «Entrar con Google»
 
-Decisión del propietario: usar Google en lugar de contratar SMTP o publicar una dirección postal. No hay que continuar el registro en Brevo. **El proveedor Google aún requiere configuración del propietario; incluir el botón no lo activa.**
+Decisión del propietario: usar Google en lugar de contratar SMTP o publicar una dirección postal. No hay que continuar el registro en Brevo. **El propietario ya configuró el proveedor y confirmó el primer acceso real en Tareas 1.3 desde su celular.** El acceso de otros usuarios depende también del estado de publicación/usuarios de prueba en Google. La prueba entre dos cuentas sigue pendiente.
 
 ## Qué solicita Tareas
 
@@ -41,3 +41,10 @@ Solo se conserva la sesión Supabase durante la sesión de la app; no se guardan
 ## Alcance de las pruebas automatizadas
 
 Pruebas de PKCE, expiración, proyecto/retorno incorrecto, cancelación, repetición, rechazo de tokens implícitos, limpieza del historial y conservación de invitaciones. Browser/Auth fixtures e instrumentación Android no equivalen a completar el consentimiento en una cuenta real de Google. Las RLS se probaron por separado en el servidor real (`docs/SUPABASE-ACTIVACION.md`).
+
+## Estado real comprobado el 29 de octubre de 2026
+
+- El propietario confirmó haber guardado las credenciales directamente en Supabase y haber dejado habilitado el secreto nuevo e inhabilitado el anterior. No se copiaron credenciales OAuth al código ni a esta documentación. No se volvió a consultar la configuración privada del proveedor.
+- Confirmó con una captura que la app instalada volvió del acceso Google y muestra «Tu cuenta está conectada» y «Sesión iniciada». Esto confirma el primer acceso físico, no solo una simulación/emulador.
+- Consulta agregada, de solo lectura, en el servidor: **1 cuenta con identidad `google` y correo confirmado**, **0 espacios compartidos**, **0 deberes compartidos**. No se leyeron correos, contraseñas, sesiones ni secretos. No se crearon cuentas de prueba ni se modificó la base.
+- Pendiente: compartir un deber/curso mediante **Colaborativo** (no copia), aceptar con otra cuenta autorizada en Google, propagar una edición y comprobar progreso individual. No se da por completada la colaboración de extremo a extremo.

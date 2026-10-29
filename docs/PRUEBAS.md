@@ -69,3 +69,9 @@ Resultado local: **16 pruebas unitarias/PGlite y suite web completas**, sin erro
 ### Resultado de publicación Tareas 1.3
 
 [40951528171](https://github.com/enriqueortizvasquez-prog/App-apuntes/actions/runs/40951528171): **SUCCESS**, fuente `03fb4751da78d6088ff13ae628329ba61a7dba8b`. Las cuatro pruebas Android y la verificación de firma pasaron, además de las 16 pruebas unitarias/PGlite y las suites web. APK `tareas-android-v1.3.0-beta.apk` publicado, 1.251.754 bytes. No se cambió la configuración del servidor ni se da por activado el proveedor Google.
+
+## Primer acceso Google real en celular confirmado
+
+El 29 de octubre de 2026 el propietario confirmó, mediante una captura del APK instalado, el regreso desde Google y la pantalla de cuenta con «Sesión iniciada». Se hizo una consulta agregada de solo lectura: `google_verified_accounts=1`, `shared_spaces=0`, `shared_tasks=0`. Esto verifica la identidad real en el servidor sin recuperar secretos OAuth, contraseñas ni tokens, y sin modificar datos.
+
+La instalación física y el primer acceso ya no son pendientes. La colaboración entre dos cuentas sí sigue pendiente: aún no se ha creado/aceptado una invitación ni comprobado propagación y progreso individual desde dos cuentas reales. Las pruebas de SQL/RLS y las automatizadas anteriores siguen siendo evidencia separada, no sustitutos de ese flujo.

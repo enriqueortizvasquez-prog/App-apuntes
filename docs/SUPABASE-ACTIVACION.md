@@ -41,6 +41,8 @@ Todos los participantes necesitan conectar el mismo proyecto. La cuenta del pane
 
 El propietario eligió mantener identidad verificada, y después aprobó **Entrar con Google** para no necesitar SMTP ni introducir una dirección postal en Brevo. No se debe continuar ese alta ni desactivar la confirmación del correo (`mailer_autoconfirm=false`). El método Google autentica la identidad a través de Google/Supabase; no necesita mandar un correo de confirmación desde Apuntes.
 
-La versión 1.2 incorpora el flujo PKCE y la configuración pública del proyecto. La configuración guardada manualmente por el usuario tiene prioridad. **El proveedor Google debe activarse todavía con un cliente OAuth propio**: seguir `docs/GOOGLE.md`. La integración actual no puede introducir esos campos del proveedor; el propietario debe hacerlo directamente en los paneles, sin compartir secretos en el chat.
+La versión 1.2 incorpora el flujo PKCE y la configuración pública del proyecto. La configuración guardada manualmente por el usuario tiene prioridad. **El propietario ya activó Google y confirmó el primer acceso en su celular**; los pasos para otros proyectos están en `docs/GOOGLE.md`. La integración actual no puede introducir esos campos del proveedor; el propietario debe hacerlo directamente en los paneles, sin compartir secretos en el chat.
 
-Pendiente: consentimiento e inicio de sesión Google reales y dos cuentas editando un espacio desde dispositivos/perfiles distintos. No se presenta todavía la colaboración como completada de extremo a extremo.
+Confirmado el 29 de octubre de 2026: regreso de Google al APK y sesión iniciada en el celular del propietario. Una consulta agregada de solo lectura encontró **1 cuenta Google con correo confirmado, 0 espacios y 0 deberes compartidos**. No se consultaron secretos del proveedor, contraseñas ni tokens. No se modificó la base ni se generaron nuevas identidades de prueba.
+
+Pendiente: creación y aceptación de una invitación, edición común y progreso independiente con dos cuentas reales desde dispositivos/perfiles distintos. No se presenta todavía la colaboración como completada de extremo a extremo.

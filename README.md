@@ -1,14 +1,14 @@
 # Tareas
 
-Antes **Apuntes**: mismo proyecto, datos y enlaces compatibles. La versión 1.3 cambia el nombre visible y el icono a Tareas y amplía de 6 a **20 colores pastel** para cursos. No cambia los permisos ni activa Google automáticamente. El propietario ya creó un proyecto de Google llamado **tareas**; todavía hay que completar OAuth.
+Antes **Apuntes**: mismo proyecto, datos y enlaces compatibles. La versión 1.3 cambia el nombre visible y el icono a Tareas y amplía de 6 a **20 colores pastel** para cursos. No cambia los permisos ni activa Google automáticamente. El propietario ya creó un proyecto de Google llamado **tareas**; ya completó el primer inicio Google en su celular; falta probar colaboración con otra cuenta.
 
 Una app gratuita para organizar los deberes de la universidad. Diseño **Grafito**, sin anuncios y sin suscripción propia. Instalable como PWA en Android, iPhone/iPad y escritorio desde un sitio HTTPS. También se entrega un **HTML independiente** que se puede descargar y abrir sin instalar nada.
 
 > **El propietario autorizó hacer público el repositorio.** Se confirmó el cambio el 29 de octubre de 2026. Las descargas de GitHub son públicas. La publicación de Pages aún requiere habilitarla en los ajustes del repositorio: la conexión actual no tiene ese permiso.
 
-## Acceso Google: versión 1.2
+## Acceso Google verificado en Android
 
-El propietario aprobó **Entrar con Google** para evitar SMTP/Brevo. El nuevo APK incluye el proyecto público Supabase y un flujo seguro de navegador con PKCE S256. **El proveedor Google todavía requiere que el propietario cree/configure el cliente OAuth directamente en los paneles**: [pasos y estado](docs/GOOGLE.md). No se afirma que el consentimiento Google ni la colaboración entre dos personas estén probados todavía. Los datos locales no requieren cuenta. Antes de cambiar de APK beta, exporta respaldo: la firma de prueba puede impedir actualizar sobre la versión anterior.
+El propietario configuró el cliente OAuth directamente en Google/Supabase. El 29 de octubre de 2026 confirmó el inicio de sesión y regreso a **Tareas 1.3 en su celular**. Una consulta agregada del servidor encontró **1 cuenta Google con correo confirmado**, sin consultar contraseñas, secretos OAuth ni tokens. **Falta probar creación/aceptación de invitación y sincronización/progreso con dos cuentas reales**. [Guía y estado](docs/GOOGLE.md). Los datos locales no requieren cuenta. Antes de cambiar de APK beta, exporta respaldo: la firma de prueba puede impedir actualizar sobre la versión anterior.
 
 ## Funciones
 
@@ -22,17 +22,17 @@ El propietario aprobó **Entrar con Google** para evitar SMTP/Brevo. El nuevo AP
 - Copias de un deber o curso por enlace o WhatsApp, sin cuenta. No incluyen progreso, recordatorios ni notas personales; incluir notas compartidas y enlace es opcional.
 - Respaldo JSON exportable/importable y recuperación de datos en bruto.
 - Instalación PWA, caché sin conexión y HTML portable sin dependencias de red.
-- **Colaboración real opcional**: cuentas, cursos/deberes sincronizados, permisos verificados en servidor, invitaciones de 7 días revocables, gestión de miembros, progreso independiente y control de conflictos al editar. El proyecto real ya está instalado. **Falta activar Google y probar dos cuentas reales antes de dar la colaboración por terminada.** No hay cuentas ficticias ni sincronización simulada.
+- **Colaboración real opcional**: cuentas, cursos/deberes sincronizados, permisos verificados en servidor, invitaciones de 7 días revocables, gestión de miembros, progreso independiente y control de conflictos al editar. El proyecto real ya está instalado. **El primer acceso Google ya funcionó; falta probar la colaboración entre dos cuentas reales.** No hay cuentas ficticias ni sincronización simulada.
 
 No se han añadido subtareas, comentarios ni recurrencias: quedaron fuera del alcance acordado.
 
 ## Conexión con el proyecto real
 
-El esquema y los permisos ya se instalaron y probaron en el proyecto Supabase del propietario. El APK 1.2 ya incluye la conexión pública; el 1.1 anterior permite configurarla manualmente pero no tiene el botón Google. **Falta configurar Google y probar dos cuentas reales**: consulta [estado de activación y configuración pública](docs/SUPABASE-ACTIVACION.md).
+El esquema y los permisos ya se instalaron y probaron en el proyecto Supabase del propietario. El APK 1.2 ya incluye la conexión pública; el 1.1 anterior permite configurarla manualmente pero no tiene el botón Google. **Primer acceso Google confirmado; falta probar colaboración con dos cuentas reales**: consulta [estado de activación y configuración pública](docs/SUPABASE-ACTIVACION.md).
 
 ## Android: APK instalable
 
-La versión **1.3.0-beta** añade un APK con la app incluida, almacenamiento local, respaldos nativos y enlaces que abre Android. La compilación se publica en [Releases](https://github.com/enriqueortizvasquez-prog/App-apuntes/releases/tag/v1.3.0-beta) solo tras superar las pruebas instrumentadas. Consulta [instalación, firma beta y límites](docs/ANDROID.md). **No se presenta como colaboración ya probada:** falta activar el proveedor Google.
+La versión **1.3.0-beta** añade un APK con la app incluida, almacenamiento local, respaldos nativos y enlaces que abre Android. La compilación se publica en [Releases](https://github.com/enriqueortizvasquez-prog/App-apuntes/releases/tag/v1.3.0-beta) solo tras superar las pruebas instrumentadas. Consulta [instalación, firma beta y límites](docs/ANDROID.md). **El acceso Google ya se comprobó en un celular; la colaboración entre dos personas sigue pendiente.**
 
 ## Usar o descargar gratis
 
