@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <meta name="theme-color" content="#111111" />
-    <title>Apuntes · Tu universidad, en orden</title>
+    <title>Tareas · Tu universidad, en orden</title>
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="icon" href="./icons/icon-192.png" />
     <link rel="apple-touch-icon" href="./icons/icon-192.png" />
@@ -16,7 +16,7 @@
   </head>
   <body>
     <div class="prototype">
-      <span>● &nbsp; Apuntes · Gratis, sin anuncios</span
+      <span>● &nbsp; Tareas · Gratis, sin anuncios</span
       ><span><span id="connection-status">Guardado local</span></span>
     </div>
     <div class="layout">
@@ -28,7 +28,17 @@
         >
           ×
         </button>
-        <div class="brand"><span>a</span>apuntes.</div>
+        <div class="brand">
+          <span aria-hidden="true"
+            ><svg viewBox="0 0 512 512" fill="none">
+              <path
+                d="M256 92Q276 236 420 256Q276 276 256 420Q236 276 92 256Q236 236 256 92Z"
+                stroke="currentColor"
+                stroke-width="20"
+                stroke-linejoin="round"
+              /></svg></span
+          >tareas.
+        </div>
         <div class="university">
           <span>U</span>
           <div>Mi universidad<small>Tu espacio, a tu ritmo</small></div>
@@ -104,7 +114,7 @@
               <div class="paper-back"></div>
               <div class="paper-front">
                 <small>UNIVERSIDAD</small>
-                <div>apuntes.</div>
+                <div>tareas.</div>
                 <p>☑ ──────</p>
                 <p>□ ────</p>
                 <p>□ ──────</p>
@@ -364,6 +374,20 @@
             <option value="#dcaebd">Rosa suave</option>
             <option value="#d8cc9f">Arena</option>
             <option value="#a9cdd2">Azul niebla</option>
+            <option value="#edb0a4">Coral</option>
+            <option value="#e8a6ae">Rojo empolvado</option>
+            <option value="#d7a7cf">Malva</option>
+            <option value="#b6a7df">Amatista</option>
+            <option value="#aab0e8">Bígaro</option>
+            <option value="#96b9de">Azul cielo</option>
+            <option value="#97cadc">Celeste</option>
+            <option value="#99d2c8">Turquesa</option>
+            <option value="#acd8bc">Menta</option>
+            <option value="#bdcda8">Salvia</option>
+            <option value="#d0dca8">Lima suave</option>
+            <option value="#e7d599">Amarillo suave</option>
+            <option value="#cbb9a9">Topo</option>
+            <option value="#c7ccd5">Gris perla</option>
           </select></label
         >
         <p class="hint">El curso se guardará en este navegador.</p>
@@ -479,6 +503,50 @@
         abre un borrador; tú decides si enviarlo.
       </p>
     </dialog>
+    <dialog id="paste-invite-dialog" class="wide">
+      <form id="paste-invite-form">
+        <div class="modal-heading">
+          <h2>Abrir invitación</h2>
+          <button
+            type="button"
+            class="icon"
+            data-close="paste-invite-dialog"
+            aria-label="Cerrar"
+          >
+            ×
+          </button>
+        </div>
+        <p class="hint">
+          ¿WhatsApp muestra el enlace como texto? Copia el enlace o el mensaje
+          completo y pégalo aquí. Funciona para invitaciones colaborativas y
+          copias.
+        </p>
+        <label class="field"
+          >Enlace o mensaje recibido<textarea
+            id="paste-invite-text"
+            rows="5"
+            maxlength="40000"
+            required
+            spellcheck="false"
+            autocomplete="off"
+            placeholder="apuntes://open#join=…"
+          ></textarea>
+        </label>
+        <p class="hint" id="paste-invite-message" role="status"></p>
+        <p class="hint">
+          Primero verás una vista previa. No se acepta la invitación ni se añade
+          nada hasta que lo confirmes. No leemos tu portapapeles
+          automáticamente.
+        </p>
+        <div class="dialog-actions">
+          <button type="button" class="text" data-close="paste-invite-dialog">
+            Cancelar</button
+          ><button type="submit" class="primary" id="open-pasted-invite">
+            Ver invitación
+          </button>
+        </div>
+      </form>
+    </dialog>
     <dialog id="invite-dialog" class="wide">
       <div class="modal-heading">
         <div>
@@ -562,10 +630,11 @@
             hidden /></label
         ><button class="secondary" id="export-recovery">
           Descargar datos sin procesar</button
-        ><a class="secondary" href="./descargas/apuntes-portable.html" download
+        ><a class="secondary" href="./descargas/tareas-portable.html" download
           >Descargar HTML sin instalación</a
-        ><a class="secondary" href="./descargas/apuntes-v1.0.0.zip" download
+        ><a class="secondary" href="./descargas/tareas-v1.5.0-beta.zip" download
           >Descargar paquete ZIP</a
+        ><button class="secondary" id="open-invitation">Abrir invitación</button
         ><button class="secondary" id="open-cloud">Cuenta y colaboración</button
         ><button class="text" id="load-examples">
           Cargar datos de ejemplo (app vacía)
@@ -577,7 +646,7 @@
         esta app.
       </p>
       <p class="hint">
-        Versión 1.0.0 ·
+        Versión 1.5.0-beta ·
         <a href="./PRIVACY.md" target="_blank" rel="noopener">Privacidad</a> ·
         <a href="./docs/INSTALAR.md" target="_blank" rel="noopener"
           >Cómo instalar</a
@@ -586,7 +655,7 @@
     </dialog>
     <dialog id="install-dialog" class="wide">
       <div class="modal-heading">
-        <h2>Instala Apuntes gratis</h2>
+        <h2>Instala Tareas gratis</h2>
         <button class="icon" data-close="install-dialog" aria-label="Cerrar">
           ×
         </button>
@@ -610,7 +679,7 @@
         HTML descargado directamente, funciona como archivo, pero no se puede
         instalar como PWA.
       </p>
-      <a class="secondary" href="./descargas/apuntes-portable.html" download
+      <a class="secondary" href="./descargas/tareas-portable.html" download
         >Descargar HTML independiente</a
       >
     </dialog>
@@ -621,31 +690,55 @@
           ×
         </button>
       </div>
+      <button class="secondary" id="open-account-invitation">
+        Abrir invitación
+      </button>
       <p class="notice" id="cloud-status"></p>
-      <form id="auth-form">
-        <label class="field"
-          >Correo electrónico<input
-            id="auth-email"
-            type="email"
-            autocomplete="email"
-            required
-            maxlength="254" /></label
-        ><label class="field"
-          >Contraseña<input
-            id="auth-password"
-            type="password"
-            autocomplete="current-password"
-            required
-            minlength="8"
-            maxlength="128"
-        /></label>
-        <div class="share-actions">
-          <button class="primary" type="submit">Iniciar sesión</button
-          ><button class="secondary" id="sign-up" type="button">
-            Crear cuenta
-          </button>
-        </div>
-      </form>
+      <p class="hint" id="cloud-backend"></p>
+      <button class="secondary" id="configure-cloud">
+        Configurar servicio de colaboración
+      </button>
+      <div id="cloud-login">
+        <button class="primary" id="sign-in-google" type="button">
+          Entrar con Google
+        </button>
+        <p class="hint">
+          Se abre el navegador para elegir tu cuenta y después vuelves a Tareas.
+          Tu contraseña de Google no se introduce en esta app. Solo solicitamos
+          tu identidad básica, no acceso a Gmail, Drive ni Calendar.
+        </p>
+        <details id="email-access">
+          <summary>Otros métodos: correo y contraseña</summary>
+          <p class="hint">
+            Para crear cuentas por correo, el propietario debe configurar un
+            servicio SMTP. Google no necesita ese envío.
+          </p>
+          <form id="auth-form">
+            <label class="field"
+              >Correo electrónico<input
+                id="auth-email"
+                type="email"
+                autocomplete="email"
+                required
+                maxlength="254" /></label
+            ><label class="field"
+              >Contraseña<input
+                id="auth-password"
+                type="password"
+                autocomplete="current-password"
+                required
+                minlength="8"
+                maxlength="128"
+            /></label>
+            <div class="share-actions">
+              <button class="primary" type="submit">Iniciar sesión</button
+              ><button class="secondary" id="sign-up" type="button">
+                Crear cuenta
+              </button>
+            </div>
+          </form>
+        </details>
+      </div>
       <div id="cloud-account" hidden>
         <p class="hint" id="cloud-user"></p>
         <div class="share-actions">
@@ -666,6 +759,51 @@
           >la guía de configuración</a
         >. No introduzcas claves secretas en esta app.
       </p>
+    </dialog>
+    <dialog id="cloud-config-dialog" class="wide">
+      <form id="cloud-config-form">
+        <div class="modal-heading">
+          <h2>Conectar colaboración</h2>
+          <button
+            class="icon"
+            type="button"
+            data-close="cloud-config-dialog"
+            aria-label="Cerrar"
+          >
+            ×
+          </button>
+        </div>
+        <p class="notice">
+          No se crea un servidor al pulsar Guardar. Primero necesitas un
+          proyecto Supabase y ejecutar el esquema de la guía. Después introduce
+          sus valores públicos.
+        </p>
+        <label class="field"
+          >URL HTTPS del proyecto<input
+            id="config-url"
+            type="url"
+            placeholder="https://tu-proyecto.supabase.co"
+            required
+            maxlength="500"
+        /></label>
+        <label class="field"
+          >Clave pública publishable o anon<textarea
+            id="config-key"
+            required
+            rows="3"
+            maxlength="3000"
+            autocomplete="off"
+            spellcheck="false"
+          ></textarea>
+        </label>
+        <p class="hint">
+          Estos valores se guardan solo en este dispositivo. Todas las personas
+          de un grupo deben conectarse al mismo proyecto. Nunca introduzcas una
+          contraseña, service_role o sb_secret_.
+        </p>
+        <p id="config-message" class="hint" role="status"></p>
+        <button class="primary" type="submit">Guardar configuración</button>
+      </form>
     </dialog>
     <dialog id="members-dialog" class="wide">
       <div class="modal-heading">

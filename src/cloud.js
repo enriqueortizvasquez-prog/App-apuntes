@@ -1,8 +1,18 @@
 /** Optional real collaboration through Supabase Auth/PostgREST. No SDK or third-party scripts. */
 export class Cloud {
-  constructor(config = globalThis.APUNTES_CONFIG || {}) {
-    this.url = (config.supabaseUrl || "").replace(/\/$/, "");
-    this.key = config.supabaseKey || "";
+  constructor(config) {
+    if (config === undefined) {
+      config = globalThis.APUNTES_CONFIG || {};
+      try {
+        config =
+          JSON.parse(localStorage.getItem("apuntes-cloud-config")) || config;
+      } catch {}
+    }
+    this.url = (
+      typeof config?.supabaseUrl === "string" ? config.supabaseUrl : ""
+    ).replace(/\/$/, "");
+    this.key =
+      typeof config?.supabaseKey === "string" ? config.supabaseKey : "";
     this.session = null;
     try {
       this.session = JSON.parse(sessionStorage.getItem("apuntes-session"));
@@ -23,18 +33,27 @@ export class Cloud {
         const p = JSON.parse(
           atob(this.key.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")),
         );
-        if (p.role !== "anon") return false;
+        return p.role === "anon";
       }
-      return true;
+      return this.key.startsWith("sb_publishable_");
     } catch {
       return false;
     }
   }
   store(session) {
-    this.session = session;
+    // Keep only Supabase credentials and the identity used by this app.
+    // In particular never persist provider_token/provider_refresh_token from Google.
+    this.session = session
+      ? {
+          access_token: session.access_token,
+          refresh_token: session.refresh_token,
+          expires_at: session.expires_at,
+          user: { id: session.user.id, email: session.user.email },
+        }
+      : null;
     try {
       if (session)
-        sessionStorage.setItem("apuntes-session", JSON.stringify(session));
+        sessionStorage.setItem("apuntes-session", JSON.stringify(this.session));
       else sessionStorage.removeItem("apuntes-session");
     } catch {}
   }
@@ -52,6 +71,8 @@ export class Cloud {
       await this.refresh();
     const response = await fetch(this.url + path, {
       method,
+      cache: "no-store",
+      referrerPolicy: "no-referrer",
       headers: {
         apikey: this.key,
         "Content-Type": "application/json",
@@ -181,6 +202,9 @@ export class Cloud {
   }
   deleteTask(id) {
     return this.rpc("delete_shared_task", { p_task: id });
+  }
+  deleteSpace(space) {
+    return this.rpc("delete_space", { p_space: space });
   }
   revoke(space) {
     return this.rpc("revoke_invites", { p_space: space });

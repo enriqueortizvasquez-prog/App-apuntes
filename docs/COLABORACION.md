@@ -1,13 +1,17 @@
 # Activar colaboración real (opcional)
 
-La descarga funciona sin este paso. La app no crea una base de datos ni envía datos a un servicio mientras no se configure. El SQL y el cliente están incluidos; no se ha aprovisionado ni probado un proyecto real en nombre del usuario.
+La descarga funciona sin este paso. La app no crea una base de datos automáticamente. El APK 1.2 ya incluye los valores públicos del proyecto del propietario; no sube los deberes locales automáticamente. El SQL y el cliente están incluidos. El 29 de octubre de 2026 se instaló y verificó el esquema en el proyecto real del propietario; consulta `SUPABASE-ACTIVACION.md` para el estado y los valores públicos de conexión. El primer acceso Google ya se confirmó en el celular del propietario y en el servidor; la prueba de colaboración con dos cuentas reales todavía está pendiente. Las instrucciones siguientes sirven también para instalar otro proyecto vacío.
 
 1. El propietario crea un proyecto Supabase y revisa sus cuotas/costos. La app no cobra una suscripción propia.
 2. En el editor SQL de un proyecto **vacío**, ejecuta `supabase/schema.sql` una vez. Es una transacción: si falla, se revierte. Si ya instalaste otra versión del esquema, no lo ejecutes encima sin una migración revisada.
-3. Activa el acceso por correo/contraseña en Auth. Configura el sitio/URLs permitidas de confirmación y recuperación con tu dirección HTTPS definitiva. Comprueba la entrega de correos y sus límites.
-4. En `config.js`, rellena `supabaseUrl` (HTTPS) y `supabaseKey` (clave **publishable** o JWT de rol **anon**). Son valores públicos. **Nunca uses service_role ni sb_secret_**; el cliente rechaza esas claves. No incluyas contraseñas de usuarios ni de base de datos en Git.
+3. Configura **Google** siguiendo `GOOGLE.md`, con retorno Android `apuntes://open` autorizado. No necesitas SMTP para este método. El acceso por correo/contraseña queda como método alternativo avanzado para otros proyectos con correo configurado; no desactives la verificación.
+4. Desde Ajustes → Cuenta y colaboración → Configurar servicio, puedes guardar los valores públicos en cada dispositivo sin reconstruir el APK. Para incluir una configuración común en las descargas, en `config.js` rellena `supabaseUrl` (HTTPS) y `supabaseKey` (clave **publishable** o JWT de rol **anon**). Son valores públicos. **Nunca uses service_role ni sb_secret_**; el cliente rechaza esas claves. No incluyas contraseñas de usuarios ni de base de datos en Git.
 5. Ejecuta pruebas y build; vuelve a publicar `dist/`. El HTML portable también contendrá la configuración pública. Mantén RLS y los permisos del SQL habilitados.
 6. Prueba con **dos cuentas distintas** en navegadores/perfiles distintos antes de ofrecerlo a compañeros.
+
+## Abrir una invitación recibida como texto
+
+Desde 1.4: copia el enlace/mensaje y usa **Ajustes y respaldo → Abrir invitación → Ver invitación**. También está en Cuenta y colaboración. No depende de enlaces pulsables en WhatsApp, no lee automáticamente el portapapeles y no acepta nada sin confirmación. La preview colaborativa se consulta sin sesión, pero unirse requiere Auth. La invitación `#join=` se conserva durante el acceso Google. Si la invitación está revocada/caducada o falla la red, se muestra el error sin cambiar datos. Las copias `#apuntes=` se validan y se importan únicamente como copias.
 
 ## Flujo
 
@@ -36,6 +40,16 @@ Los permisos se comprueban en el servidor, no solo ocultando botones. Las claves
 4. A cambia la fecha: B la recibe al sincronizar, conservando su recordatorio local.
 5. Dos administradores editan la misma versión: la segunda escritura se rechaza, no pierde datos silenciosamente.
 6. Revoca/caduca una invitación: un tercero no puede aceptarla; un miembro retirado ya no puede leer/escribir.
-7. Prueba la confirmación por correo, acceso, cierre de sesión, renovación de sesión y errores de red.
+7. Prueba el consentimiento Google, cancelación, regreso al APK, acceso, cierre/renovación de sesión y errores de red. Si habilitas el método de correo, comprueba además su confirmación/recuperación y SMTP.
 
 Las pruebas automáticas verifican el cliente con respuestas controladas y ejecutan el esquema SQL y sus permisos en PostgreSQL embebido (PGlite); no sustituyen estas pruebas contra el servicio real configurado por el propietario.
+
+## Eliminar un espacio compartido (1.5)
+
+- **Propietario:** Cursos → Eliminar para todos, o Cuenta y colaboración → Eliminar para todos. Confirma solo si quieres borrar el espacio compartido, sus deberes y todos los progresos. Las invitaciones quedan inválidas. Exporta respaldo previamente; no hay deshacer.
+- **Otros participantes, incluidos administradores no propietarios:** Abandonar solo retira su acceso y progreso, sin destruir el espacio.
+- Los cursos y deberes locales independientes se conservan. Si un curso contenía además deberes locales ajenos al espacio, estos no se eliminan.
+- Una copia independiente ya importada no se puede borrar remotamente. Un dispositivo sin conexión puede mostrar la caché anterior hasta sincronizar; no se promete borrado remoto del almacenamiento de un equipo offline.
+- Para instalar en otro proyecto existente, aplica `supabase/migrations/20261029_delete_space.sql` una vez como administrador. El proyecto del propietario ya recibió la migración; no repitas `schema.sql` sobre una instalación con datos.
+
+Estado actual comunicado por el propietario: dos cuentas reales sincronizan altas/ediciones y mantienen progreso individual; Google en producción permite entrar a una cuenta no añadida a usuarios de prueba. No se modificó OAuth para esta corrección.

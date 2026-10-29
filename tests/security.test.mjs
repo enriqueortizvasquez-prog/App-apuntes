@@ -2,13 +2,16 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { PGlite } from "@electric-sql/pglite";
-test("PostgreSQL: RLS, roles, progreso independiente, conflictos, revocación y retirada", async () => {
+test("PostgreSQL: RLS, roles, progreso independiente, conflictos, revocación, retirada y eliminación exclusiva del propietario", async () => {
   const db = new PGlite();
   try {
     await db.exec(
       `create role anon;create role authenticated;create schema auth;create table auth.users(id uuid primary key);create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;grant usage on schema auth to public;grant execute on function auth.uid() to public;grant usage on schema public to anon,authenticated;`,
     );
     await db.exec(await readFile("supabase/schema.sql", "utf8"));
+    await db.exec(
+      await readFile("supabase/migrations/20261029_delete_space.sql", "utf8"),
+    );
     const A = "10000000-0000-0000-0000-000000000001",
       B = "10000000-0000-0000-0000-000000000002",
       C = "10000000-0000-0000-0000-000000000003";
@@ -127,6 +130,98 @@ test("PostgreSQL: RLS, roles, progreso independiente, conflictos, revocación y 
     assert.equal((await db.query("select * from shared_tasks")).rows.length, 0);
     assert.equal(
       (await db.query("select * from task_progress")).rows.length,
+      0,
+    );
+    // Deletion is stronger than admin: only the actual owner can destroy it.
+    await user(A);
+    const fresh = (
+      await db.query("select public.create_invite($1,'member') as invite", [
+        space,
+      ])
+    ).rows[0].invite;
+    await user(B);
+    await db.query("select public.accept_invite($1)", [fresh.token]);
+    await assert.rejects(
+      db.query("select public.delete_space($1)", [space]),
+      /propietario/,
+    );
+    await user(A);
+    await db.query("select public.change_member($1,$2,'admin')", [space, B]);
+    await user(B);
+    await db.query("select public.set_task_progress($1,true)", [task.id]);
+    await assert.rejects(
+      db.query("select public.delete_space($1)", [space]),
+      /propietario/,
+    );
+    await assert.rejects(
+      db.query("delete from public.shared_spaces where id=$1", [space]),
+      /permission denied/i,
+    );
+    await user(C);
+    await assert.rejects(
+      db.query("select public.delete_space($1)", [space]),
+      /propietario/,
+    );
+    const other = (
+      await db.query(
+        "select public.create_space($1,'course',$2::jsonb) as id",
+        ["Otro curso", JSON.stringify([payload])],
+      )
+    ).rows[0].id;
+    await db.exec("reset role;set role anon");
+    await assert.rejects(
+      db.query("select public.delete_space($1)", [space]),
+      /permission denied/i,
+    );
+    await user("");
+    await assert.rejects(
+      db.query("select public.delete_space($1)", [space]),
+      /Inicia sesión/,
+    );
+    await user(A);
+    await db.query("select public.set_task_progress($1,true)", [task.id]);
+    await db.query("select public.delete_space($1)", [space]);
+    await assert.rejects(
+      db.query("select public.delete_space($1)", [space]),
+      /ya no existe/,
+    );
+    await assert.rejects(
+      db.query("select public.preview_invite($1)", [fresh.token]),
+      /no existe/,
+    );
+    await db.exec("reset role");
+    for (const table of [
+      "shared_spaces",
+      "space_members",
+      "shared_tasks",
+      "space_invites",
+    ])
+      assert.equal(
+        (
+          await db.query(
+            `select count(*)::int as n from ${table} where ${table === "shared_spaces" ? "id" : "space_id"}=$1`,
+            [space],
+          )
+        ).rows[0].n,
+        0,
+      );
+    assert.equal(
+      (
+        await db.query("select * from task_progress where task_id=$1", [
+          task.id,
+        ])
+      ).rows.length,
+      0,
+    );
+    assert.equal(
+      (await db.query("select * from shared_spaces where id=$1", [other])).rows
+        .length,
+      1,
+    );
+    await user(B);
+    assert.equal(
+      (await db.query("select * from shared_tasks where space_id=$1", [space]))
+        .rows.length,
       0,
     );
   } finally {

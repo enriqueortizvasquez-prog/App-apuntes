@@ -1,8 +1,27 @@
-# Apuntes
+# Tareas
+
+> **Tareas 1.5 beta — eliminar un curso compartido:** el propietario puede elegir «Eliminar para todos» y confirmar el borrado del espacio, deberes, progresos e invitaciones. Los demás participantes solo pueden abandonarlo. [APK 1.5](https://github.com/enriqueortizvasquez-prog/App-apuntes/releases/download/v1.5.0-beta/tareas-android-v1.5.0-beta.apk) (se publica tras superar las pruebas Android). Antes de cambiar de APK beta, exporta respaldo.
+
+> **Acceso público confirmado por el propietario:** Google pasó a producción y una cuenta ajena a la lista de prueba pudo entrar. Web informativa publicada: https://tarea-dij.pages.dev/. Esto no acredita por sí solo verificación de marca de Google. Los avisos de proveedor/pruebas pendientes que figuran en secciones históricas describen estados anteriores.
+
+> **Actualización — 29 de octubre de 2026:** el propietario confirmó la colaboración en dos dispositivos con **cuentas Google distintas**: crear y editar deberes se sincroniza, y completarlos mantiene el progreso individual. Las menciones posteriores a esta prueba como pendiente describen el estado anterior a esta confirmación. Esto no confirma por separado el pegado manual desde WhatsApp ni todos los casos de permisos.
+
+## Novedades de 1.4
+
+- Icono de **estrella de cuatro puntas tipo rombo**, como la estrella del estado vacío, en Android y la web.
+- **Ajustes y respaldo → Abrir invitación**: pega el enlace o el mensaje de WhatsApp completo, aunque no sea pulsable. También disponible desde Cuenta y colaboración.
+- Vista previa y confirmación antes de unirse/importar. Los enlaces de 1.3 siguen siendo compatibles; el receptor necesita 1.4 para pegarlos. No se lee el portapapeles automáticamente ni se abre la web del texto pegado.
+- El acceso Google ya funcionó en el celular del propietario. Aún falta comprobar el flujo completo entre dos cuentas reales; las pruebas automáticas de invitaciones usan API controlada.
+
+Antes **Apuntes**: mismo proyecto, datos y enlaces compatibles. La versión 1.3 cambia el nombre visible y el icono a Tareas y amplía de 6 a **20 colores pastel** para cursos. No cambia los permisos ni activa Google automáticamente. El propietario ya creó un proyecto de Google llamado **tareas**; ya completó el primer inicio Google en su celular; falta probar colaboración con otra cuenta.
 
 Una app gratuita para organizar los deberes de la universidad. Diseño **Grafito**, sin anuncios y sin suscripción propia. Instalable como PWA en Android, iPhone/iPad y escritorio desde un sitio HTTPS. También se entrega un **HTML independiente** que se puede descargar y abrir sin instalar nada.
 
-> Este repositorio se mantiene **privado por decisión de su propietario**. Las releases y los artefactos de GitHub solo están disponibles para usuarios con acceso. No se ha publicado el código ni un sitio público. Una URL de vista previa temporal no sustituye un alojamiento permanente.
+> **El propietario autorizó hacer público el repositorio.** Se confirmó el cambio el 29 de octubre de 2026. Las descargas de GitHub son públicas. La publicación de Pages aún requiere habilitarla en los ajustes del repositorio: la conexión actual no tiene ese permiso.
+
+## Acceso Google verificado en Android
+
+El propietario configuró el cliente OAuth directamente en Google/Supabase. El 29 de octubre de 2026 confirmó el inicio de sesión y regreso a **Tareas 1.3 en su celular**. Una consulta agregada del servidor encontró **1 cuenta Google con correo confirmado**, sin consultar contraseñas, secretos OAuth ni tokens. **Falta probar creación/aceptación de invitación y sincronización/progreso con dos cuentas reales**. [Guía y estado](docs/GOOGLE.md). Los datos locales no requieren cuenta. Antes de cambiar de APK beta, exporta respaldo: la firma de prueba puede impedir actualizar sobre la versión anterior.
 
 ## Funciones
 
@@ -16,18 +35,26 @@ Una app gratuita para organizar los deberes de la universidad. Diseño **Grafito
 - Copias de un deber o curso por enlace o WhatsApp, sin cuenta. No incluyen progreso, recordatorios ni notas personales; incluir notas compartidas y enlace es opcional.
 - Respaldo JSON exportable/importable y recuperación de datos en bruto.
 - Instalación PWA, caché sin conexión y HTML portable sin dependencias de red.
-- **Colaboración real opcional**: cuentas, cursos/deberes sincronizados, permisos verificados en servidor, invitaciones de 7 días revocables, gestión de miembros, progreso independiente y control de conflictos al editar. Requiere configurar un proyecto Supabase. **No está activa hasta que el propietario configure ese servicio.** No hay cuentas ficticias ni sincronización simulada.
+- **Colaboración real opcional**: cuentas, cursos/deberes sincronizados, permisos verificados en servidor, invitaciones de 7 días revocables, gestión de miembros, progreso independiente y control de conflictos al editar. El proyecto real ya está instalado. **El primer acceso Google ya funcionó; falta probar la colaboración entre dos cuentas reales.** No hay cuentas ficticias ni sincronización simulada.
 
 No se han añadido subtareas, comentarios ni recurrencias: quedaron fuera del alcance acordado.
 
+## Conexión con el proyecto real
+
+El esquema y los permisos ya se instalaron y probaron en el proyecto Supabase del propietario. El APK 1.2 ya incluye la conexión pública; el 1.1 anterior permite configurarla manualmente pero no tiene el botón Google. **Primer acceso Google confirmado; falta probar colaboración con dos cuentas reales**: consulta [estado de activación y configuración pública](docs/SUPABASE-ACTIVACION.md).
+
+## Android: APK instalable
+
+La versión **1.4.0-beta** añade un APK con la app incluida, almacenamiento local, respaldos nativos y enlaces que abre Android. La compilación se publica en [Releases](https://github.com/enriqueortizvasquez-prog/App-apuntes/releases/tag/v1.4.0-beta) solo tras superar las pruebas instrumentadas. Consulta [instalación, firma beta y límites](docs/ANDROID.md). **El acceso Google ya se comprobó en un celular; la colaboración entre dos personas sigue pendiente.**
+
 ## Usar o descargar gratis
 
-1. Descarga `apuntes-portable.html` desde la release (con acceso a este repositorio) o desde el archivo entregado en la conversación.
+1. Descarga `tareas-portable.html` desde la release  o desde el archivo entregado en la conversación.
 2. Ábrelo en un navegador moderno: todos los datos locales se quedan en ese navegador. El archivo portable no se instala como PWA y sus enlaces `file://` no son accesibles por otras personas.
 3. Para instalar como app, usa la publicación HTTPS de `dist/`. Ver [instalación](docs/INSTALAR.md).
 4. Para preparar la colaboración real, consulta [configuración](docs/COLABORACION.md) y [privacidad](PRIVACY.md).
 
-**No es un APK ni una aplicación de App Store.** Es una web instalable y un HTML descargable. No se cobran pagos por la app; el proveedor de alojamiento/datos puede tener cuotas propias.
+Además del HTML y la PWA hay un **APK Android beta separado**. No es una aplicación de App Store ni una publicación en Google Play. No se cobran pagos por la app; el proveedor de alojamiento/datos puede tener cuotas propias.
 
 ## Desarrollo y pruebas
 
@@ -44,8 +71,8 @@ npm run dev       # 0.0.0.0:3000
 `npm run build` produce:
 
 - `dist/`: sitio estático listo para HTTPS, incluyendo rutas relativas compatibles con `/App-apuntes/`.
-- `dist/descargas/apuntes-portable.html`: una sola página con JS/CSS incrustados.
-- `dist/descargas/apuntes-v1.0.0.zip`: sitio, HTML portable, instrucciones y SQL opcional.
+- `dist/descargas/tareas-portable.html`: una sola página con JS/CSS incrustados.
+- `dist/descargas/tareas-v1.4.0-beta.zip`: sitio, HTML portable, instrucciones y SQL opcional.
 
 Para servir el resultado de producción: `SERVE_DIR=dist npm run dev`. No publiques `node_modules` ni archivos de pruebas/credenciales.
 
@@ -53,7 +80,9 @@ Los ejemplos no se cargan automáticamente en una app nueva. Están en Ajustes y
 
 ## GitHub
 
-- `Pruebas y descarga` ejecuta pruebas y genera un artefacto descargable para personas con acceso al repositorio.
+El APK se construye en `.github/workflows/android.yml`. La app Android empaqueta los archivos locales; no depende de Pages para arrancar. Los valores públicos de colaboración también pueden guardarse desde la app sin reconstruirla.
+
+- `Pruebas y descarga` ejecuta pruebas y genera un artefacto descargable público.
 - `Publicar sitio (opcional)` es **manual**; no modifica la privacidad ni activa Pages automáticamente. GitHub Pages desde un repositorio privado puede requerir un plan compatible. Alternativamente, publica `dist/` en un alojamiento estático HTTPS de tu elección sin hacer público el repositorio. Antes de publicar, revisa la visibilidad del sitio: un repositorio privado no implica que el sitio sea privado.
 - Configura los valores públicos de colaboración en `config.js`. **Nunca añadas `service_role`, claves secretas, contraseñas ni tokens de GitHub.**
 

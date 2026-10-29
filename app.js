@@ -9,10 +9,19 @@ import {
   nameKey,
   validBackup,
   decodeInvitation,
+  parseInvitationText,
   encodeInvitation,
 } from "./src/domain.js";
 import { Cloud } from "./src/cloud.js";
+import {
+  beginGoogleSignIn,
+  finishGoogleSignIn,
+  cancelGoogleSignIn,
+  oauthCallback,
+  oauthRedirect,
+} from "./src/oauth.js";
 import { setupInstall } from "./src/install.js";
+import { nativeAndroid, shareBase, setupNative } from "./src/native.js";
 ("use strict");
 const $ = (s) => document.querySelector(s),
   STORAGE = "apuntes-v1",
@@ -22,7 +31,8 @@ const $ = (s) => document.querySelector(s),
     { id: "history", name: "Historia", color: "#e3bd99" },
     { id: "bio", name: "Biología", color: "#dcaebd" },
   ];
-const cloud = new Cloud();
+let cloud = new Cloud();
+const spaceOperations = new Set();
 let cloudSpaces = [],
   cloudSyncing = false,
   lastCloudUser = cloud.session?.user?.id || null;
@@ -607,7 +617,16 @@ function renderCourses() {
     );
     const actions = el("div", "course-card-actions"),
       open = el("button", "text open-course", "Ver deberes →"),
-      remove = el("button", "text delete-course-button", "Eliminar");
+      remove = el(
+        "button",
+        "text delete-course-button",
+        c.remoteSpace
+          ? c.remoteOwner === cloud.session?.user?.id
+            ? "Eliminar para todos"
+            : "Abandonar"
+          : "Eliminar",
+      );
+    remove.disabled = spaceOperations.has(c.remoteSpace);
     open.dataset.course = c.id;
     open.setAttribute("aria-label", `Ver deberes de ${c.name}`);
     open.addEventListener("click", () => {
@@ -616,7 +635,7 @@ function renderCourses() {
       resetSearch();
       render();
     });
-    remove.setAttribute("aria-label", `Eliminar curso ${c.name}`);
+    remove.setAttribute("aria-label", `${remove.textContent} curso ${c.name}`);
     remove.addEventListener("click", () => openDeleteCourse(c));
     actions.append(open, remove);
     card.append(actions);
@@ -629,19 +648,57 @@ function openCourseDialog() {
   $("#course-dialog").showModal();
   $("#course-name").focus();
 }
+async function changeSharedSpace(space) {
+  const current = cloud,
+    user = current.session?.user?.id;
+  if (!user) return notify("Inicia sesión para gestionar este espacio.");
+  if (spaceOperations.has(space.id)) return;
+  const owned = space.owner_id === user;
+  const message = owned
+    ? `¿Eliminar «${space.title}» para todos? Se borrarán definitivamente el espacio compartido, sus deberes, los progresos de todos y las invitaciones. Tus compañeros perderán el acceso al sincronizar. Esta acción no se puede deshacer. Exporta un respaldo antes de continuar.`
+    : `¿Abandonar «${space.title}»? No se eliminarán el curso ni los deberes de los demás. Perderás el acceso y tu progreso en este espacio.`;
+  if (!confirm(message)) return;
+  spaceOperations.add(space.id);
+  renderCourses();
+  renderCloudAccount();
+  let changed = false;
+  try {
+    if (owned) await current.deleteSpace(space.id);
+    else await current.leave(space.id);
+    changed = true;
+    if (cloud !== current || current.session?.user?.id !== user) return;
+    // An older snapshot may still be in flight. Wait for it, then read again.
+    if (cloudSyncing) await cloudSyncing.catch(() => {});
+    if (cloud !== current || current.session?.user?.id !== user) return;
+    await syncCloud();
+    if (cloud === current && current.session?.user?.id === user)
+      notify(
+        owned
+          ? "Espacio y deberes compartidos eliminados para todos."
+          : "Has abandonado el espacio.",
+      );
+  } catch (e) {
+    if (cloud === current && current.session?.user?.id === user)
+      notify(
+        changed
+          ? "El cambio se guardó en el servidor, pero no se pudo actualizar la vista. Pulsa Sincronizar."
+          : e.message,
+      );
+  } finally {
+    spaceOperations.delete(space.id);
+    if (cloud === current && current.session?.user?.id === user) {
+      renderCourses();
+      renderCloudAccount();
+    }
+  }
+}
 function openDeleteCourse(c) {
   if (c.remoteSpace) {
-    if (
-      !confirm(
-        "¿Abandonar este curso compartido? No se eliminarán los deberes de los demás. El propietario debe conservar su espacio.",
-      )
-    )
-      return;
-    cloud
-      .leave(c.remoteSpace)
-      .then(() => syncCloud())
-      .then(() => notify("Has abandonado el curso."))
-      .catch((e) => notify(e.message));
+    changeSharedSpace({
+      id: c.remoteSpace,
+      title: c.name,
+      owner_id: c.remoteOwner,
+    });
     return;
   }
   deletingCourseId = c.id;
@@ -753,14 +810,14 @@ function deliverReminder(message) {
         navigator.serviceWorker.getRegistration().then((reg) => {
           if (reg)
             reg
-              .showNotification("Apuntes · Tus entregas", {
+              .showNotification("Tareas · Tus entregas", {
                 body: message,
                 tag: "apuntes-reminder",
               })
               .catch(() => {});
         });
       }
-      new Notification("Apuntes · Tus entregas", {
+      new Notification("Tareas · Tus entregas", {
         body: message,
         tag: "apuntes-local-reminder",
       });
@@ -864,7 +921,13 @@ function setShareLink(link, label) {
   $("#whatsapp-share").setAttribute("aria-disabled", String(!link));
   if (link)
     $("#whatsapp-share").href =
-      "https://wa.me/?text=" + encodeURIComponent(label + "\n" + link);
+      "https://wa.me/?text=" +
+      encodeURIComponent(
+        label +
+          "\n" +
+          link +
+          "\n\nSi aparece como texto: abre Tareas → Ajustes y respaldo → Abrir invitación y pega este mensaje. Necesitas Tareas 1.4 o posterior.",
+      );
   else $("#whatsapp-share").removeAttribute("href");
 }
 function updateShare() {
@@ -911,10 +974,7 @@ function updateShare() {
       link: include ? t.link : "",
     })),
   };
-  const link =
-    location.href.split("#")[0] +
-    "#apuntes=" +
-    encodeInvitation(currentPayload);
+  const link = shareBase() + "#apuntes=" + encodeInvitation(currentPayload);
   if (link.length > 16000) {
     setShareLink("", "");
     $("#share-error").textContent =
@@ -922,8 +982,9 @@ function updateShare() {
     return;
   }
   setShareLink(link, "Te comparto una copia: " + currentPayload.title);
-  $("#share-error").textContent =
-    location.protocol === "file:"
+  $("#share-error").textContent = nativeAndroid()
+    ? "Si WhatsApp lo muestra como texto, el receptor puede copiar el mensaje y pegarlo en Tareas 1.4 → Ajustes y respaldo → Abrir invitación."
+    : location.protocol === "file:"
       ? "El enlace de un archivo local no puede abrirse en otro dispositivo. Comparte desde una dirección HTTPS."
       : "Solo se comparten los datos elegidos. No se comparte tu progreso, recordatorios ni notas personales.";
 }
@@ -1020,6 +1081,58 @@ function loadInvitation() {
     notify("No se pudo abrir el enlace. Comprueba que esté completo.");
   }
 }
+let pasteRevision = 0;
+$("#paste-invite-dialog").addEventListener("close", () => pasteRevision++);
+function openPasteInvitation() {
+  pasteRevision++;
+  $("#open-pasted-invite").disabled = false;
+  $("#paste-invite-text").value = "";
+  $("#paste-invite-message").textContent = "";
+  $("#paste-invite-dialog").showModal();
+  $("#paste-invite-text").focus();
+}
+$("#open-invitation").addEventListener("click", openPasteInvitation);
+$("#open-account-invitation").addEventListener("click", openPasteInvitation);
+$("#paste-invite-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const button = $("#open-pasted-invite");
+  if (button.disabled) return;
+  button.disabled = true;
+  const revision = pasteRevision;
+  $("#paste-invite-message").textContent = "Comprobando la invitación…";
+  try {
+    const received = parseInvitationText($("#paste-invite-text").value);
+    if (received.kind === "copy") {
+      const payload = decodeInvitation(received.encoded);
+      if (!validInvitation(payload))
+        throw Error("La copia contiene datos no admitidos o está incompleta.");
+      showInvitation(payload);
+    } else {
+      const opened = await openCloudInvite(
+        received.token,
+        true,
+        () => revision === pasteRevision && $("#paste-invite-dialog").open,
+      );
+      if (!opened) return;
+    }
+    // Preserve only the validated invitation, never the full WhatsApp message.
+    // Google login can resume #join after returning from the system browser.
+    history.replaceState(
+      null,
+      "",
+      location.pathname + location.search + received.hash,
+    );
+    $("#paste-invite-text").value = "";
+    $("#paste-invite-dialog").close();
+    $("#settings-dialog").close();
+    $("#cloud-dialog").close();
+  } catch (error) {
+    if (revision === pasteRevision)
+      $("#paste-invite-message").textContent = error.message;
+  } finally {
+    if (revision === pasteRevision) button.disabled = false;
+  }
+});
 function setMenu(open) {
   $("#sidebar").classList.toggle("open", open);
   $("#open-menu").setAttribute("aria-expanded", String(open));
@@ -1437,6 +1550,7 @@ $("#top-date").textContent = new Date().toLocaleDateString("es-PE", {
 });
 render();
 setupInstall(notify);
+setupNative(notify);
 loadInvitation();
 checkReminders();
 setInterval(() => {
@@ -1453,6 +1567,10 @@ document.addEventListener("visibilitychange", () => {
 
 // Local backups, installation and optional authenticated collaboration.
 function downloadFile(name, text, type = "application/json") {
+  if (nativeAndroid()) {
+    globalThis.ApuntesAndroid.saveFile(name, text, type);
+    return;
+  }
   const url = URL.createObjectURL(new Blob([text], { type })),
     a = el("a");
   a.href = url;
@@ -1476,7 +1594,7 @@ $("#export-backup").addEventListener("click", () => {
     return { ...copy, shareMode: "copy", shareRole: "admin" };
   });
   downloadFile(
-    `apuntes-${offset(0)}.json`,
+    `tareas-${offset(0)}.json`,
     JSON.stringify(
       {
         version: 1,
@@ -1489,13 +1607,15 @@ $("#export-backup").addEventListener("click", () => {
     ),
   );
   notify(
-    "Respaldo descargado. No contiene contraseñas ni claves. Los compartidos se respaldan como copias locales.",
+    nativeAndroid()
+      ? "Respaldo preparado. Elige dónde guardarlo en tu celular."
+      : "Respaldo descargado. No contiene contraseñas ni claves. Los compartidos se respaldan como copias locales.",
   );
 });
 $("#export-recovery").addEventListener("click", () => {
   try {
     downloadFile(
-      "apuntes-recuperacion.json",
+      "tareas-recuperacion.json",
       JSON.stringify(
         {
           current: localStorage.getItem(STORAGE),
@@ -1517,7 +1637,9 @@ $("#import-backup").addEventListener("change", async (e) => {
       throw Error("El respaldo supera el límite de 2 MB.");
     const data = JSON.parse(await file.text());
     if (!validBackup(data))
-      throw Error("El archivo no es un respaldo válido de Apuntes.");
+      throw Error(
+        "El archivo no es un respaldo válido de Tareas (antes Apuntes).",
+      );
     if (
       (tasks.length || courses.length) &&
       !confirm(
@@ -1742,11 +1864,15 @@ async function syncCloud() {
   }
 }
 function renderCloudAccount() {
+  $("#cloud-backend").textContent = cloud.configured
+    ? "Servicio configurado: " + cloud.url
+    : "Ningún servicio conectado.";
   $("#cloud-status").textContent = !cloud.configured
     ? "Esta publicación no tiene configurado el servicio de colaboración. Los deberes, cursos, calendario, copias y respaldos funcionan sin cuenta. Para activar la sincronización, el propietario debe configurar Supabase siguiendo la guía."
     : cloud.session
       ? "Tu cuenta está conectada. Las operaciones compartidas se verifican en el servidor; los datos locales no se suben automáticamente."
-      : "Inicia sesión o crea una cuenta para colaborar. La app local sigue funcionando sin cuenta.";
+      : "Entra con Google para colaborar. La app local sigue funcionando sin cuenta. No necesitas crear otra contraseña.";
+  $("#cloud-login").hidden = !cloud.configured || !!cloud.session;
   $("#auth-form").hidden = !cloud.configured || !!cloud.session;
   $("#cloud-account").hidden = !cloud.session;
   $("#cloud-user").textContent = cloud.session?.user?.email || "";
@@ -1778,23 +1904,16 @@ function renderCloudAccount() {
       members.addEventListener("click", () => showMembers(space.id));
       actions.append(revoke, members);
     }
-    if (space.owner_id !== cloud.session?.user.id) {
-      const leave = el("button", "text", "Abandonar");
-      leave.addEventListener("click", async () => {
-        if (
-          !confirm("¿Abandonar este espacio sin borrar los datos de los demás?")
-        )
-          return;
-        try {
-          await cloud.leave(space.id);
-          await syncCloud();
-          notify("Has abandonado el espacio.");
-        } catch (e) {
-          notify(e.message);
-        }
-      });
-      actions.append(leave);
-    }
+    const owned = space.owner_id === cloud.session?.user.id;
+    const remove = el(
+      "button",
+      "text " + (owned ? "delete-space" : "leave-space"),
+      owned ? "Eliminar para todos" : "Abandonar",
+    );
+    remove.dataset.space = space.id;
+    remove.disabled = spaceOperations.has(space.id);
+    remove.addEventListener("click", () => changeSharedSpace(space));
+    actions.append(remove);
     row.append(actions);
     $("#cloud-spaces").append(row);
   }
@@ -1864,6 +1983,76 @@ $("#sync-cloud").addEventListener("click", async () => {
     $("#cloud-message").textContent = e.message;
   }
 });
+async function connectedAccount() {
+  if (lastCloudUser && lastCloudUser !== cloud.session.user.id)
+    purgeCloudData();
+  lastCloudUser = cloud.session.user.id;
+  renderCloudAccount();
+  // A sync error must not look like a failed login or ask for the password again.
+  try {
+    await syncCloud();
+    $("#cloud-message").textContent = "Sesión iniciada.";
+  } catch (e) {
+    $("#cloud-message").textContent =
+      "Sesión iniciada. No se pudo sincronizar: " + e.message;
+  }
+  if (location.hash.startsWith("#join="))
+    await openCloudInvite(location.hash.slice(6));
+}
+let googleStarting = false;
+$("#sign-in-google").addEventListener("click", async () => {
+  if (googleStarting) return;
+  const current = cloud;
+  googleStarting = true;
+  $("#sign-in-google").disabled = true;
+  $("#cloud-message").textContent = "Preparando el acceso seguro…";
+  try {
+    const url = await beginGoogleSignIn(
+      current,
+      oauthRedirect(nativeAndroid(), location.href),
+      location.hash,
+    );
+    if (cloud !== current || cloud.session) {
+      cancelGoogleSignIn();
+      return;
+    }
+    $("#cloud-message").textContent =
+      "Continúa en Google en el navegador. Si cancelas, vuelve aquí y pulsa Entrar con Google otra vez.";
+    // Android intercepts this top-level HTTPS navigation and opens the system
+    // browser. Google's login must NEVER be displayed inside our WebView.
+    location.assign(url);
+  } catch (e) {
+    $("#cloud-message").textContent = e.message;
+  } finally {
+    googleStarting = false;
+    $("#sign-in-google").disabled = false;
+  }
+});
+async function resumeGoogleSignIn() {
+  let callback;
+  try {
+    callback = oauthCallback(location.href, nativeAndroid());
+  } catch (e) {
+    notify(e.message);
+    return;
+  }
+  if (!callback) return;
+  // Erase the authorization code from history even if exchange fails.
+  history.replaceState(null, "", callback.cleanUrl);
+  const current = cloud;
+  openCloud();
+  $("#cloud-message").textContent = "Comprobando el acceso con Google…";
+  try {
+    const { session, returnHash } = await finishGoogleSignIn(current, callback);
+    if (cloud !== current || current.session) return;
+    current.store(session);
+    if (returnHash)
+      history.replaceState(null, "", callback.cleanUrl + returnHash);
+    await connectedAccount();
+  } catch (e) {
+    $("#cloud-message").textContent = e.message;
+  }
+}
 async function authenticate(signUp) {
   if (!$("#auth-form").reportValidity()) return;
   const password = $("#auth-password").value,
@@ -1878,14 +2067,7 @@ async function authenticate(signUp) {
         return;
       }
     } else await cloud.signIn(email, password);
-    if (lastCloudUser && lastCloudUser !== cloud.session.user.id)
-      purgeCloudData();
-    lastCloudUser = cloud.session.user.id;
-    await syncCloud();
-    renderCloudAccount();
-    $("#cloud-message").textContent = "Sesión iniciada.";
-    if (location.hash.startsWith("#join="))
-      await openCloudInvite(location.hash.slice(6));
+    await connectedAccount();
   } catch (e) {
     $("#cloud-message").textContent = e.message;
   } finally {
@@ -1898,6 +2080,7 @@ $("#auth-form").addEventListener("submit", (e) => {
 });
 $("#sign-up").addEventListener("click", () => authenticate(true));
 $("#sign-out").addEventListener("click", async () => {
+  cancelGoogleSignIn();
   try {
     await cloud.signOut();
   } catch {}
@@ -1925,12 +2108,12 @@ $("#create-shared-link").addEventListener("click", async () => {
       ));
     await syncCloud();
     const info = await cloud.invite(space, $("#share-role").value);
-    const link = location.href.split("#")[0] + "#join=" + info.token;
+    const link = shareBase() + "#join=" + info.token;
     setShareLink(link, "Te invito a " + currentShareTitle());
     $("#share-error").textContent =
       "Invitación válida hasta " +
       new Date(info.expires_at).toLocaleString("es-PE") +
-      ". Los miembros tendrán acceso al espacio compartido.";
+      ". Si aparece como texto, cópialo y usa Ajustes y respaldo → Abrir invitación en Tareas 1.4 o posterior.";
     notify(
       "Invitación creada. La información compartida ya está en el servidor.",
     );
@@ -1946,7 +2129,7 @@ function currentShareTitle() {
         $("#share-subject").textContent
     : $("#share-subject").textContent;
 }
-async function openCloudInvite(token) {
+async function openCloudInvite(token, raise = false, isCurrent = () => true) {
   if (
     !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
       token,
@@ -1956,11 +2139,21 @@ async function openCloudInvite(token) {
     return;
   }
   if (!cloud.configured) {
+    if (raise)
+      throw Error(
+        "Primero configura el servicio en Cuenta y colaboración. Tus datos locales no cambian.",
+      );
     openCloud();
     return;
   }
   try {
-    const info = await cloud.inviteInfo(token);
+    const service = cloud;
+    const info = await service.inviteInfo(token);
+    if (cloud !== service)
+      throw Error(
+        "Cambió el servicio de colaboración. Vuelve a abrir la invitación.",
+      );
+    if (!isCurrent()) return false;
     invitation = { remoteToken: token };
     $("#invite-title").textContent = info.title;
     $("#invite-notice").textContent =
@@ -1973,7 +2166,9 @@ async function openCloudInvite(token) {
       ? "Unirme al espacio"
       : "Iniciar sesión para unirme";
     $("#invite-dialog").showModal();
+    return true;
   } catch (e) {
+    if (raise) throw e;
     notify(e.message);
   }
 }
@@ -2037,3 +2232,55 @@ if (location.protocol === "file:") {
     }),
   );
 }
+
+$("#configure-cloud").addEventListener("click", () => {
+  $("#config-url").value = cloud.url;
+  $("#config-key").value = cloud.key;
+  $("#config-message").textContent = "";
+  $("#cloud-config-dialog").showModal();
+});
+$("#cloud-config-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const config = {
+    supabaseUrl: $("#config-url").value.trim().replace(/\/$/, ""),
+    supabaseKey: $("#config-key").value.trim(),
+  };
+  const candidate = new Cloud(config);
+  if (!candidate.configured) {
+    $("#config-message").textContent =
+      "Usa la URL HTTPS del proyecto y una clave pública publishable o anon. Nunca service_role ni sb_secret_.";
+    return;
+  }
+  if (
+    cloud.session &&
+    !confirm(
+      "Cambiar de servicio cerrará la sesión y quitará la caché compartida de este dispositivo. Exporta un respaldo si necesitas sus notas personales y recordatorios. ¿Continuar?",
+    )
+  )
+    return;
+  try {
+    localStorage.setItem("apuntes-cloud-config", JSON.stringify(config));
+    try {
+      await cloud.signOut();
+    } catch {}
+    cloud = new Cloud(config);
+    cancelGoogleSignIn();
+    cloud.store(null);
+    lastCloudUser = null;
+    purgeCloudData();
+    renderCloudAccount();
+    $("#cloud-config-dialog").close();
+    notify(
+      "Configuración guardada. El proyecto debe tener instalado el esquema SQL. Inicia sesión para comprobar la conexión.",
+    );
+  } catch {
+    $("#config-message").textContent =
+      "No se pudo guardar la configuración. Revisa el almacenamiento del dispositivo.";
+  }
+});
+
+// A warm Android return may be a same-document fragment navigation, not a
+// reload. Handle both paths and scrub the callback before any async exchange.
+window.addEventListener("hashchange", resumeGoogleSignIn);
+// All dialogs and invitation handlers are ready before handling a browser return.
+resumeGoogleSignIn();

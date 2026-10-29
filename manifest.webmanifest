@@ -1,7 +1,7 @@
 {
   "id": "./",
-  "name": "Apuntes · Deberes universitarios",
-  "short_name": "Apuntes",
+  "name": "Tareas · Deberes universitarios",
+  "short_name": "Tareas",
   "description": "Cursos, entregas y calendario. Gratis y disponible sin conexión.",
   "lang": "es",
   "start_url": "./",

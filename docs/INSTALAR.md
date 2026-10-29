@@ -1,4 +1,4 @@
-# Descargar e instalar Apuntes gratis
+# Descargar e instalar Tareas gratis
 
 ## Descargar un solo archivo
 
@@ -16,11 +16,13 @@ El botón «Instalar gratis» utiliza el diálogo del navegador si está disponi
 
 Abre la app una vez con conexión para que se descarguen los archivos. Después podrás organizar tus datos locales sin internet. Los compartidos necesitan conexión para actualizarse. La instalación desde la vista previa de Arena sirve para probar; usa un alojamiento permanente para tu uso diario.
 
-## Alojamiento sin cambiar la privacidad del repositorio
+## APK para Android
 
-El propietario ha decidido mantenerlo privado. Las descargas de las releases requieren acceso a GitHub. Puedes compartir el HTML/ZIP personalmente con quien quieras que use la app, o publicar únicamente el contenido de `dist/` en un alojamiento estático HTTPS. No es necesario publicar el código fuente en GitHub. Los proveedores establecen sus propias cuotas.
+La versión 1.4.0-beta incluye un APK instalable sin depender de una página remota. Consulta `ANDROID.md` para descargar, instalar, guardar respaldos y revisar las limitaciones de su firma de prueba. El APK no es una aplicación para iPhone. Incluye acceso Google en navegador (el primer acceso real ya se confirmó) y la opción de pegar invitaciones (`GOOGLE.md`); exporta respaldo antes de cambiar desde una beta anterior porque la firma puede ser distinta.
 
-El workflow de Pages es opcional y manual. No garantiza que tu plan permita publicar desde un repositorio privado. Este proyecto no cambia esa configuración ni la visibilidad del repositorio por su cuenta.
+## Publicación
+
+El propietario autorizó publicar el repositorio y GitHub confirma que ya es público. Las releases son públicas. Pages aún no está habilitado: para publicar el sitio, el propietario debe elegir Settings → Pages → Build and deployment → Source: GitHub Actions. La conexión del agente no tiene permiso para cambiar esa configuración. El APK no requiere Pages.
 
 ## Copias de seguridad
 
@@ -29,3 +31,7 @@ Ajustes y respaldo → Descargar respaldo JSON. Para recuperarlo: Importar respa
 ## Avisos y almacenamiento
 
 Los recordatorios no son una alarma del sistema garantizada. Solo se revisan mientras el navegador ejecute la app. Para entregas críticas usa también una alarma de tu dispositivo. No hay integración automática con Google Calendar en esta versión.
+
+## Invitación que WhatsApp muestra como texto
+
+Copia el mensaje o enlace y, en **Tareas 1.4**, abre **Ajustes y respaldo → Abrir invitación → pegar → Ver invitación**. Revisa la vista previa antes de unirte. Los enlaces de versiones anteriores sirven sin generar uno nuevo, mientras estén vigentes. Para entrar en un espacio necesitas tu propia cuenta; en modo de prueba Google exige usuarios autorizados.

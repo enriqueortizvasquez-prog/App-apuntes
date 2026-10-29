@@ -150,3 +150,11 @@ vite.config.ts.timestamp-*
 
 # Browser regression output (not source)
 .test-artifacts/
+
+# Android generated builds and private signing material
+android/.gradle/
+android/**/build/
+android/local.properties
+android/app/src/main/assets/
+*.jks
+*.keystore

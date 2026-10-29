@@ -1,6 +1,11 @@
+import { nativeAndroid } from "./native.js";
 export function setupInstall(notify) {
   const button = document.querySelector("#install-app");
   let prompt;
+  if (nativeAndroid()) {
+    button.textContent = "App Android";
+    button.disabled = true;
+  }
   window.addEventListener("beforeinstallprompt", (e) => {
     e.preventDefault();
     prompt = e;
@@ -17,10 +22,10 @@ export function setupInstall(notify) {
   });
   window.addEventListener("appinstalled", () => {
     button.textContent = "App instalada";
-    notify("Apuntes ya está instalada.");
+    notify("Tareas ya está instalada.");
   });
   const status = document.querySelector("#connection-status");
-  let offlineReady = location.protocol === "file:";
+  let offlineReady = location.protocol === "file:" || nativeAndroid();
   const update = () => {
     status.textContent = navigator.onLine
       ? offlineReady
@@ -31,7 +36,11 @@ export function setupInstall(notify) {
   window.addEventListener("online", update);
   window.addEventListener("offline", update);
   update();
-  if ("serviceWorker" in navigator && location.protocol !== "file:") {
+  if (
+    !nativeAndroid() &&
+    "serviceWorker" in navigator &&
+    location.protocol !== "file:"
+  ) {
     navigator.serviceWorker
       .register("./sw.js")
       .then((reg) => {
@@ -42,7 +51,7 @@ export function setupInstall(notify) {
               navigator.serviceWorker.controller
             )
               notify(
-                "Hay una actualización. Cierra todas las ventanas de Apuntes y vuelve a abrir.",
+                "Hay una actualización. Cierra todas las ventanas de Tareas y vuelve a abrir.",
               );
           });
         check(reg.installing);
