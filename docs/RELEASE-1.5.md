@@ -16,3 +16,7 @@ El backend ya está actualizado. No se eliminó ningún curso real al preparar e
 Esta descarga solo se publica después de superar pruebas unitarias/PGlite, suites de interfaz y seis pruebas instrumentadas en Android 35. Además, se comprobó el permiso y borrado en el servicio real con fixtures revertidas, sin modificar datos del usuario. La prueba de interfaz usa API controlada; el nuevo borrado manual en el celular del propietario todavía requiere confirmación.
 
 Se mantienen la estrella de cuatro puntas, 20 colores, invitaciones pegadas y sincronización con progreso individual. Las versiones anteriores no se reemplazan.
+
+## Publicación verificada
+
+[Pruebas Android y publicación](https://github.com/enriqueortizvasquez-prog/App-apuntes/actions/runs/40972288385): SUCCESS, 4 min 52 s. APK `tareas-android-v1.5.0-beta.apk`, 1.267.230 bytes. SHA256: `377357ef910bcd59fcc2fd0d7ee0ea4b82f345a515ceff466efdb7506b196812`.

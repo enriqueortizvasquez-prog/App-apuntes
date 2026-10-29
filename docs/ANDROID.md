@@ -116,4 +116,10 @@ Backend actualizado con `delete_shared_space_owner_only`, sin borrar cursos real
 
 La versión 1.5 usa versionCode 6 y conserva `pe.apuntes.app`, el retorno OAuth y almacenamiento. No cambies credenciales ni configures Google de nuevo. Exporta respaldo antes de instalar: la firma debug puede obligar a desinstalar e importar después. No se garantiza actualización sobre la beta anterior.
 
-La publicación se condiciona a pruebas web, 23 pruebas unitarias/PGlite y seis pruebas instrumentadas en Android 35, incluida confirmación/cancelación del borrado con API controlada. Los resultados y descarga final se registrarán tras finalizar CI. La eliminación manual en el celular del propietario todavía no se ha confirmado.
+La publicación superó las pruebas web, 23 pruebas unitarias/PGlite y seis pruebas instrumentadas en Android 35, incluida confirmación/cancelación del borrado con API controlada. La eliminación manual en el celular del propietario todavía no se ha confirmado.
+
+### APK 1.5 publicado y comprobado
+
+[Actions 40972288385](https://github.com/enriqueortizvasquez-prog/App-apuntes/actions/runs/40972288385), job 123791707145, **SUCCESS en 4 min 52 s**, fuente `9cd5cbc7833c059fa942aa5de10d2996a0952cbe`. Compilación, prueba Android 35 offline, firma y publicación completadas correctamente.
+
+[Descargar Tareas 1.5 APK](https://github.com/enriqueortizvasquez-prog/App-apuntes/releases/download/v1.5.0-beta/tareas-android-v1.5.0-beta.apk): **1.267.230 bytes**, SHA256 de GitHub `377357ef910bcd59fcc2fd0d7ee0ea4b82f345a515ceff466efdb7506b196812`. Release pública beta, no borrador, con archivo de firma y sumas. No se reemplazaron APK anteriores. No se borró ningún curso real durante la implementación.
