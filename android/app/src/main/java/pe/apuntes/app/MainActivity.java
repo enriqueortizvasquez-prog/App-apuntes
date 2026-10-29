@@ -102,7 +102,7 @@ public class MainActivity extends Activity {
         String fragment=invitationFragment(uri);
         if(fragment!=null)web.loadUrl(START+"#"+fragment);
     }
-    @Override protected void onNewIntent(Intent intent) { super.onNewIntent(intent);setIntent(intent);openInvitation(intent.getData()); }
+    @Override protected void onNewIntent(Intent intent) { super.onNewIntent(intent);openInvitation(intent.getData()); }
     @Override public void onBackPressed() {
         web.evaluateJavascript("(()=>{const d=[...document.querySelectorAll('dialog[open]')].pop();if(d){if(document.querySelector('#save-task')?.disabled)return true;d.close();return true;}const s=document.querySelector('#sidebar.open');if(s){document.querySelector('#close-menu').click();return true;}return false;})()",value->{
             if(!"true".equals(value)){if(web.canGoBack())web.goBack();else MainActivity.super.onBackPressed();}
