@@ -1,0 +1,26 @@
+name: Pruebas y descarga
+on:
+  push:
+    branches: [main, arena/1a19fbb0-app-apuntes]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - run: npm run test:ui
+      - uses: actions/upload-artifact@v4
+        with:
+          name: apuntes-descarga-gratis
+          path: dist/descargas/
+          retention-days: 30

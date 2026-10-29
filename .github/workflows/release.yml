@@ -1,0 +1,35 @@
+name: Preparar descarga de la versión
+on:
+  push:
+    branches: [arena/1a19fbb0-app-apuntes]
+    paths: [.github/workflows/release.yml]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Versión existente a completar
+        required: true
+        default: v1.0.0
+permissions:
+  contents: write
+jobs:
+  download:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_REPO: ${{ github.repository }}
+      RELEASE_TAG: ${{ inputs.tag || 'v1.0.0' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - run: npm run test:ui
+      - name: Adjuntar los archivos a la release privada
+        run: |
+          gh release view "$RELEASE_TAG"
+          gh release upload "$RELEASE_TAG" dist/descargas/apuntes-portable.html dist/descargas/apuntes-v1.0.0.zip --clobber
+          gh release edit "$RELEASE_TAG" --draft=false

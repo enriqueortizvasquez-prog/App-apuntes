@@ -1,0 +1,690 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#111111" />
+    <title>Apuntes · Tu universidad, en orden</title>
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" href="./icons/icon-192.png" />
+    <link rel="apple-touch-icon" href="./icons/icon-192.png" />
+    <meta
+      name="description"
+      content="Cursos, deberes y calendario. App gratuita, instalable y disponible sin conexión."
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="prototype">
+      <span>● &nbsp; Apuntes · Gratis, sin anuncios</span
+      ><span><span id="connection-status">Guardado local</span></span>
+    </div>
+    <div class="layout">
+      <aside id="sidebar">
+        <button
+          id="close-menu"
+          class="icon close-menu"
+          aria-label="Cerrar menú"
+        >
+          ×
+        </button>
+        <div class="brand"><span>a</span>apuntes.</div>
+        <div class="university">
+          <span>U</span>
+          <div>Mi universidad<small>Tu espacio, a tu ritmo</small></div>
+        </div>
+        <p class="eyebrow nav-label">MI ESPACIO</p>
+        <nav aria-label="Navegación principal">
+          <button data-view="pending" class="nav active">
+            ▦ <span>Mis deberes</span></button
+          ><button data-view="completed" class="nav">
+            ✓ <span>Completados</span><i id="completed-count"></i></button
+          ><button data-view="calendar" class="nav">
+            ▦ <span>Calendario</span></button
+          ><button data-view="courses" class="nav">
+            ▱ <span>Cursos</span><i id="courses-count"></i>
+          </button>
+        </nav>
+        <div class="sidebar-bottom">
+          <div class="progress-label">
+            Tu avance <span id="progress-text"></span>
+          </div>
+          <div
+            class="progress"
+            id="progress"
+            role="progressbar"
+            aria-label="Deberes completados"
+            aria-valuemin="0"
+            aria-valuemax="100"
+          >
+            <i id="progress-fill"></i>
+          </div>
+          <p>Un deber menos.<br />Un poco más de espacio para ti.</p>
+          <button class="text small" id="reset-demo">
+            ⚙ Ajustes y respaldo
+          </button>
+        </div>
+      </aside>
+      <div id="menu-overlay"></div>
+      <main>
+        <header>
+          <button
+            class="secondary menu-button"
+            id="open-menu"
+            aria-label="Abrir navegación"
+            aria-expanded="false"
+            aria-controls="sidebar"
+          >
+            ☰
+          </button>
+          <div class="breadcrumb">
+            Mi espacio <span>/</span>
+            <strong id="breadcrumb-title">Mis deberes</strong>
+          </div>
+          <span id="top-date"></span
+          ><button
+            class="secondary"
+            id="open-reminders"
+            aria-label="Ver recordatorios"
+          >
+            ◷ <span class="bell-label">Avisos</span>
+            <span id="reminder-count">0</span></button
+          ><button class="secondary" id="install-app">Instalar gratis</button>
+        </header>
+        <div class="content">
+          <section class="welcome">
+            <div class="welcome-copy">
+              <span class="eyebrow">TU ESPACIO DE ESTUDIO</span>
+              <h1>Tu semestre,<br /><em>en orden.</em></h1>
+              <p>
+                Deberes, fechas y cursos.<br />Todo a mano, sin complicaciones.
+              </p>
+            </div>
+            <div class="paper-art" aria-hidden="true">
+              <div class="paper-back"></div>
+              <div class="paper-front">
+                <small>UNIVERSIDAD</small>
+                <div>apuntes.</div>
+                <p>☑ ──────</p>
+                <p>□ ────</p>
+                <p>□ ──────</p>
+                <span>NOTAS / 01</span>
+              </div>
+            </div>
+          </section>
+          <div class="section-heading">
+            <div>
+              <h2 id="section-title">Mis deberes</h2>
+              <p id="section-description"></p>
+            </div>
+            <div class="heading-actions">
+              <button class="primary" id="add-course" hidden>
+                + Nuevo curso</button
+              ><button class="secondary" id="share-course" hidden>
+                ↗ Compartir curso</button
+              ><button class="primary" id="new-task">+ Nuevo deber</button>
+            </div>
+          </div>
+          <button class="text" id="back-courses" hidden>
+            ← Volver a cursos
+          </button>
+          <section id="courses-panel" aria-label="Gestionar cursos" hidden>
+            <div class="courses-intro">
+              <span class="eyebrow">UN LUGAR PARA CADA MATERIA</span>
+              <p>
+                Elige un curso para ver sus deberes. Aquí también puedes
+                añadirlo o eliminarlo.
+              </p>
+            </div>
+            <div id="course-grid" class="course-grid" aria-live="polite"></div>
+            <div id="courses-empty" class="empty" hidden>
+              <h3>Tu próximo semestre empieza aquí</h3>
+              <p>Añade tu primer curso con el botón «Nuevo curso».</p>
+            </div>
+          </section>
+          <div class="toolbar" id="list-toolbar">
+            <label class="search"
+              >⌕
+              <input
+                type="search"
+                id="search"
+                placeholder="Buscar en esta vista…"
+                aria-label="Buscar en la vista seleccionada" /></label
+            ><label class="sort-label"
+              ><span>Ordenar por</span
+              ><select id="sort" aria-label="Ordenar deberes">
+                <option value="date">Fecha de entrega</option>
+                <option value="priority">Prioridad</option>
+                <option value="title">Nombre del deber</option>
+              </select></label
+            >
+          </div>
+          <section
+            id="calendar-view"
+            hidden
+            aria-label="Calendario de entregas"
+          >
+            <div class="calendar-heading">
+              <h3 id="calendar-month"></h3>
+              <div>
+                <button
+                  class="secondary"
+                  id="previous-month"
+                  aria-label="Mes anterior"
+                >
+                  ‹</button
+                ><button class="secondary" id="calendar-today">Hoy</button
+                ><button
+                  class="secondary"
+                  id="next-month"
+                  aria-label="Mes siguiente"
+                >
+                  ›
+                </button>
+              </div>
+            </div>
+            <p class="hint">
+              Selecciona un día para ver sus entregas. El borde indica el estado
+              y cada punto representa un curso. Solo se muestran deberes sin
+              completar.
+            </p>
+            <div class="weekdays" aria-hidden="true">
+              <span>Lun</span><span>Mar</span><span>Mié</span><span>Jue</span
+              ><span>Vie</span><span>Sáb</span><span>Dom</span>
+            </div>
+            <div
+              id="calendar-grid"
+              class="calendar-grid"
+              aria-label="Días del mes"
+            ></div>
+            <div class="calendar-legend">
+              <span><i class="green-key"></i>Con entregas por vencer</span
+              ><span><i class="red-key"></i>Con entregas vencidas</span>
+            </div>
+            <div class="day-heading">
+              <h3 id="selected-day-title"></h3>
+              <span id="day-count"></span>
+            </div>
+            <div id="day-tasks" aria-live="polite"></div>
+            <p class="hint" id="day-empty" hidden>
+              Sin entregas para este día. Puedes añadir un deber con el botón de
+              arriba.
+            </p>
+            <div class="integration">
+              <span>↗</span>
+              <div>
+                <strong>Google Calendar</strong>
+                <p>
+                  Sin conectar. Este calendario es local; no envía datos a
+                  Google.
+                </p>
+              </div>
+              <small>Sincronización futura</small>
+            </div>
+          </section>
+          <div id="task-list" aria-live="polite"></div>
+          <div class="empty" id="empty-state" hidden>
+            <span>✧</span>
+            <h3 id="empty-title">Todo en calma</h3>
+            <p id="empty-copy"></p>
+            <button id="clear-search" class="text" hidden>
+              Limpiar búsqueda
+            </button>
+          </div>
+          <footer>
+            <span>● &nbsp; Pequeños pasos, grandes semestres.</span
+            ><span>Tus datos locales se guardan en este dispositivo</span>
+          </footer>
+        </div>
+      </main>
+    </div>
+    <dialog id="task-dialog">
+      <form id="task-form">
+        <div class="modal-heading">
+          <div>
+            <span class="eyebrow">HAZLE ESPACIO</span>
+            <h2 id="editor-heading">Un nuevo deber</h2>
+          </div>
+          <button
+            type="button"
+            class="icon"
+            data-close="task-dialog"
+            aria-label="Cerrar"
+          >
+            ×
+          </button>
+        </div>
+        <p class="notice" id="shared-edit-notice" hidden></p>
+        <label class="field"
+          >¿Qué tienes que hacer?<input
+            id="task-title"
+            name="title"
+            required
+            maxlength="120"
+            placeholder="Ej. Preparar la exposición"
+        /></label>
+        <div class="form-row">
+          <label class="field"
+            >Curso<select
+              name="course"
+              id="task-course"
+              required
+            ></select></label
+          ><label class="field"
+            >Prioridad<select name="priority" id="task-priority">
+              <option value="normal">Normal</option>
+              <option value="high">Importante</option>
+            </select></label
+          >
+        </div>
+        <div class="form-row">
+          <label class="field"
+            >Fecha de entrega<input
+              type="date"
+              min="1900-01-01"
+              max="9999-12-31"
+              id="task-due"
+              name="due"
+              required /></label
+          ><label class="field"
+            >Hora de entrega<input
+              type="time"
+              id="task-time"
+              name="time"
+              required
+              value="23:59"
+          /></label>
+        </div>
+        <label class="field"
+          >Notas <small>Opcional · hasta 2.000 caracteres</small
+          ><textarea
+            id="task-notes"
+            name="notes"
+            maxlength="2000"
+            rows="3"
+            placeholder="Instrucciones, ideas o lo que no quieres olvidar…"
+          ></textarea></label
+        ><label class="field"
+          >Enlace de referencia <small>Opcional · https://…</small
+          ><input
+            type="url"
+            id="task-link"
+            name="link"
+            maxlength="2000"
+            placeholder="https://…" /></label
+        ><label class="field"
+          >Recordatorio personal<select id="task-reminder" name="reminder">
+            <option value="none">Sin recordatorio</option>
+            <option value="0">A la hora de entrega</option>
+            <option value="15">15 minutos antes</option>
+            <option value="60">1 hora antes</option>
+            <option value="1440">1 día antes</option>
+          </select></label
+        >
+        <label class="field" id="personal-notes-field" hidden
+          >Notas personales (no se comparten)<textarea
+            id="personal-notes"
+            maxlength="2000"
+            rows="2"
+          ></textarea>
+        </label>
+        <p class="hint" id="reminder-preview"></p>
+        <button class="primary" id="save-task" type="submit">
+          + Añadir deber
+        </button>
+      </form>
+    </dialog>
+    <dialog id="course-dialog">
+      <form id="course-form">
+        <div class="modal-heading">
+          <div>
+            <span class="eyebrow">UN ESPACIO PARA APRENDER</span>
+            <h2>Un nuevo curso</h2>
+          </div>
+          <button
+            type="button"
+            class="icon"
+            data-close="course-dialog"
+            aria-label="Cerrar"
+          >
+            ×
+          </button>
+        </div>
+        <label class="field"
+          >Nombre del curso<input
+            id="course-name"
+            required
+            maxlength="60"
+            placeholder="Ej. Física II" /></label
+        ><label class="field"
+          >Color identificador<select id="course-color">
+            <option value="#a9c2e8">Azul suave</option>
+            <option value="#c4afe3">Lavanda</option>
+            <option value="#e3bd99">Melocotón</option>
+            <option value="#dcaebd">Rosa suave</option>
+            <option value="#d8cc9f">Arena</option>
+            <option value="#a9cdd2">Azul niebla</option>
+          </select></label
+        >
+        <p class="hint">El curso se guardará en este navegador.</p>
+        <button class="primary" type="submit">Añadir curso</button>
+      </form>
+    </dialog>
+    <dialog id="delete-course-dialog">
+      <div class="modal-heading">
+        <h2>Eliminar curso</h2>
+        <button
+          class="icon"
+          data-close="delete-course-dialog"
+          aria-label="Cerrar"
+        >
+          ×
+        </button>
+      </div>
+      <p class="notice" id="delete-course-description"></p>
+      <label class="field" id="move-course-field"
+        >Trasladar sus deberes a<select id="move-course"></select
+      ></label>
+      <p class="hint" id="delete-course-help"></p>
+      <div class="dialog-actions">
+        <button class="text" data-close="delete-course-dialog">Cancelar</button
+        ><button id="confirm-delete-course" class="secondary">
+          Eliminar curso
+        </button>
+      </div>
+    </dialog>
+    <dialog id="share-dialog" class="wide">
+      <div class="modal-heading">
+        <div>
+          <span class="eyebrow">MEJOR EN COMPAÑÍA</span>
+          <h2 id="share-title">Compartir deber</h2>
+        </div>
+        <button class="icon" data-close="share-dialog" aria-label="Cerrar">
+          ×
+        </button>
+      </div>
+      <p class="share-subject" id="share-subject"></p>
+      <fieldset class="share-modes">
+        <legend>¿Cómo quieres compartirlo?</legend>
+        <label class="share-choice"
+          ><input type="radio" name="share-mode" value="copy" checked /><span
+            ><strong>Enviar una copia</strong
+            ><small
+              >Una copia independiente. No se actualiza con tus cambios.</small
+            ></span
+          ></label
+        ><label class="share-choice"
+          ><input type="radio" name="share-mode" value="shared" /><span
+            ><strong>Colaborativo</strong
+            ><small
+              >Información sincronizada y progreso individual. Requiere
+              configurar el servicio.</small
+            ></span
+          ></label
+        >
+      </fieldset>
+      <div id="share-permissions" hidden>
+        <label class="field"
+          >Permiso de la invitación<select id="share-role">
+            <option value="member">
+              Miembro · consultar y completar lo suyo
+            </option>
+            <option value="admin">Administrador · editar e invitar</option>
+          </select></label
+        >
+        <p class="hint">
+          Los permisos se verifican en el servidor. Los miembros completan solo
+          sus propios deberes.
+        </p>
+      </div>
+      <label class="checkbox-label"
+        ><input type="checkbox" id="include-notes" /> Incluir notas y enlace de
+        referencia</label
+      >
+      <p class="hint">
+        Solo se incluyen deberes sin completar. Tu progreso y tus recordatorios
+        nunca se comparten.
+      </p>
+      <p class="notice" id="share-explanation"></p>
+      <button class="secondary" id="create-shared-link" hidden>
+        Crear invitación</button
+      ><button class="text" id="connect-share" hidden>
+        Configurar o iniciar sesión →
+      </button>
+      <label class="field"
+        >Enlace para compartir<textarea
+          id="share-link"
+          rows="2"
+          readonly
+          aria-label="Enlace para compartir"
+        ></textarea>
+      </label>
+      <p class="hint" id="share-error" role="status"></p>
+      <div class="share-actions">
+        <button class="secondary" id="copy-share">Copiar enlace</button
+        ><a
+          class="primary"
+          id="whatsapp-share"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Abrir WhatsApp ↗</a
+        >
+      </div>
+      <button class="text preview-invite" id="preview-invite">
+        Ver cómo lo recibiría un compañero →
+      </button>
+      <p class="privacy-note">
+        Una copia contiene los datos seleccionados y no se puede revocar. Una
+        invitación colaborativa caduca en 7 días y puede revocarse. WhatsApp
+        abre un borrador; tú decides si enviarlo.
+      </p>
+    </dialog>
+    <dialog id="invite-dialog" class="wide">
+      <div class="modal-heading">
+        <div>
+          <span class="eyebrow">VISTA DEL COMPAÑERO</span>
+          <h2 id="invite-title">Una invitación para ti</h2>
+        </div>
+        <button class="icon" data-close="invite-dialog" aria-label="Cerrar">
+          ×
+        </button>
+      </div>
+      <p class="notice" id="invite-notice"></p>
+      <p class="hint" id="invite-meta"></p>
+      <div id="invite-tasks"></div>
+      <p class="hint">
+        Se añadirá a este navegador. No modifica los deberes del remitente. Los
+        recordatorios se configuran por separado.
+      </p>
+      <div class="dialog-actions">
+        <button class="text" data-close="invite-dialog">Cancelar</button
+        ><button class="primary" id="accept-invite">
+          Añadir a mis deberes
+        </button>
+      </div>
+    </dialog>
+    <dialog id="reminders-dialog" class="wide">
+      <div class="modal-heading">
+        <h2>Tus recordatorios</h2>
+        <button class="icon" data-close="reminders-dialog" aria-label="Cerrar">
+          ×
+        </button>
+      </div>
+      <p class="notice">
+        Avisos locales de prueba. Solo se comprueban con esta página abierta y
+        en ejecución. No funcionan con el HTML cerrado ni son garantizados en
+        segundo plano.
+      </p>
+      <div id="reminder-list"></div>
+      <p class="hint" id="notification-status"></p>
+      <div class="share-actions">
+        <button class="secondary" id="enable-notifications">
+          Permitir avisos del navegador</button
+        ><button class="text" id="test-reminder">Probar aviso</button>
+      </div>
+    </dialog>
+    <dialog id="reset-dialog">
+      <div class="modal-heading">
+        <h2>¿Cargar ejemplos?</h2>
+        <button class="icon" data-close="reset-dialog" aria-label="Cerrar">
+          ×
+        </button>
+      </div>
+      <p class="hint">
+        Se añadirán cursos y deberes de ejemplo. Solo está disponible si la app
+        está vacía.
+      </p>
+      <div class="dialog-actions">
+        <button class="text" data-close="reset-dialog">Cancelar</button
+        ><button class="primary" id="confirm-reset">Cargar ejemplos</button>
+      </div>
+    </dialog>
+
+    <dialog id="settings-dialog" class="wide">
+      <div class="modal-heading">
+        <h2>Ajustes y respaldo</h2>
+        <button class="icon" data-close="settings-dialog" aria-label="Cerrar">
+          ×
+        </button>
+      </div>
+      <p class="hint">
+        Tus datos locales no se envían a ningún servidor. Exporta una copia para
+        conservarlos o cambiar de dispositivo.
+      </p>
+      <div class="settings-actions">
+        <button class="secondary" id="export-backup">
+          Descargar respaldo JSON</button
+        ><label class="secondary file-label"
+          >Importar respaldo<input
+            type="file"
+            id="import-backup"
+            accept="application/json,.json"
+            hidden /></label
+        ><button class="secondary" id="export-recovery">
+          Descargar datos sin procesar</button
+        ><a class="secondary" href="./descargas/apuntes-portable.html" download
+          >Descargar HTML sin instalación</a
+        ><a class="secondary" href="./descargas/apuntes-v1.0.0.zip" download
+          >Descargar paquete ZIP</a
+        ><button class="secondary" id="open-cloud">Cuenta y colaboración</button
+        ><button class="text" id="load-examples">
+          Cargar datos de ejemplo (app vacía)
+        </button>
+      </div>
+      <p class="hint">
+        La app es gratuita. Las copias portables no requieren cuenta. La
+        colaboración requiere el servicio de datos configurado por quien publica
+        esta app.
+      </p>
+      <p class="hint">
+        Versión 1.0.0 ·
+        <a href="./PRIVACY.md" target="_blank" rel="noopener">Privacidad</a> ·
+        <a href="./docs/INSTALAR.md" target="_blank" rel="noopener"
+          >Cómo instalar</a
+        >
+      </p>
+    </dialog>
+    <dialog id="install-dialog" class="wide">
+      <div class="modal-heading">
+        <h2>Instala Apuntes gratis</h2>
+        <button class="icon" data-close="install-dialog" aria-label="Cerrar">
+          ×
+        </button>
+      </div>
+      <ol class="install-steps">
+        <li>
+          <strong>Android / Chrome:</strong> abre el menú ⋮ y elige «Instalar
+          app» o «Añadir a pantalla de inicio».
+        </li>
+        <li>
+          <strong>iPhone / iPad:</strong> en Safari, pulsa Compartir y «Añadir a
+          pantalla de inicio».
+        </li>
+        <li>
+          <strong>Computadora:</strong> en Chrome o Edge, usa el icono de
+          instalar de la barra de direcciones.
+        </li>
+      </ol>
+      <p class="notice">
+        La instalación requiere una dirección HTTPS (o localhost). Si abres el
+        HTML descargado directamente, funciona como archivo, pero no se puede
+        instalar como PWA.
+      </p>
+      <a class="secondary" href="./descargas/apuntes-portable.html" download
+        >Descargar HTML independiente</a
+      >
+    </dialog>
+    <dialog id="cloud-dialog" class="wide">
+      <div class="modal-heading">
+        <h2>Cuenta y colaboración</h2>
+        <button class="icon" data-close="cloud-dialog" aria-label="Cerrar">
+          ×
+        </button>
+      </div>
+      <p class="notice" id="cloud-status"></p>
+      <form id="auth-form">
+        <label class="field"
+          >Correo electrónico<input
+            id="auth-email"
+            type="email"
+            autocomplete="email"
+            required
+            maxlength="254" /></label
+        ><label class="field"
+          >Contraseña<input
+            id="auth-password"
+            type="password"
+            autocomplete="current-password"
+            required
+            minlength="8"
+            maxlength="128"
+        /></label>
+        <div class="share-actions">
+          <button class="primary" type="submit">Iniciar sesión</button
+          ><button class="secondary" id="sign-up" type="button">
+            Crear cuenta
+          </button>
+        </div>
+      </form>
+      <div id="cloud-account" hidden>
+        <p class="hint" id="cloud-user"></p>
+        <div class="share-actions">
+          <button class="secondary" id="sync-cloud">Sincronizar ahora</button
+          ><button class="text" id="sign-out">Cerrar sesión</button>
+        </div>
+        <p class="hint">
+          Los cambios se actualizan cada 20 segundos con la app abierta. El
+          progreso es individual. Los deberes compartidos requieren conexión
+          para editarlos o completarlos.
+        </p>
+        <div id="cloud-spaces"></div>
+      </div>
+      <p class="hint" id="cloud-message" role="status"></p>
+      <p class="hint">
+        Si eres quien publica la app: sigue
+        <a href="./docs/COLABORACION.md" target="_blank" rel="noopener"
+          >la guía de configuración</a
+        >. No introduzcas claves secretas en esta app.
+      </p>
+    </dialog>
+    <dialog id="members-dialog" class="wide">
+      <div class="modal-heading">
+        <h2>Miembros del espacio</h2>
+        <button class="icon" data-close="members-dialog" aria-label="Cerrar">
+          ×
+        </button>
+      </div>
+      <p class="hint">
+        Los identificadores evitan exponer correos electrónicos. Los cambios de
+        acceso se aplican en el servidor.
+      </p>
+      <div id="members-list"></div>
+    </dialog>
+    <div class="toast" id="toast" role="status">
+      <span id="toast-text"></span
+      ><button id="undo-button" hidden>Deshacer</button>
+    </div>
+    <script src="config.js"></script>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>

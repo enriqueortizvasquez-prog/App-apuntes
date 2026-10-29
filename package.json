@@ -1,0 +1,22 @@
+{
+  "name": "apuntes-universidad",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Deberes universitarios. App instalable y gratuita, local primero.",
+  "license": "UNLICENSED",
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/server.mjs",
+    "build": "node scripts/build.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "test:ui": "node tests/browser.mjs",
+    "format": "prettier --write index.html styles.css app.js src scripts tests *.json *.webmanifest"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.3.14",
+    "@sparticuz/chromium": "153.0.0",
+    "fflate": "^0.8.3",
+    "prettier": "3.6.2",
+    "puppeteer-core": "^25.16.0"
+  }
+}
