@@ -75,4 +75,8 @@ Nombre visible, iconos web/Android, notificaciones y descargas actualizados a **
 
 Se conservan el identificador Android `pe.apuntes.app`, las claves de almacenamiento y `apuntes://open` para no romper datos ni invitaciones ni el retorno autorizado en Supabase. El proyecto Google existente se llama **tareas**; el nombre no significa que OAuth ya esté activado. Exporta respaldo antes de cambiar de APK beta por la posible diferencia de firma.
 
-La publicación 1.3 está condicionada a sus propias pruebas. La descarga 1.2 no se modifica.
+La publicación 1.3 superó sus propias pruebas; la descarga 1.2 no se modifica.
+
+Resultado: [Actions 40951528171](https://github.com/enriqueortizvasquez-prog/App-apuntes/actions/runs/40951528171), revisión `03fb4751da78d6088ff13ae628329ba61a7dba8b`, **SUCCESS**, 4 min 43 s. Pasaron las 16 pruebas unitarias/PGlite, la suite web con los 20 colores y las cuatro pruebas Android (incluidas etiqueta Tareas, selección del color nuevo, respaldo, importación y retorno OAuth). Firma verificada antes de publicar.
+
+[Descargar Tareas 1.3 APK](https://github.com/enriqueortizvasquez-prog/App-apuntes/releases/download/v1.3.0-beta/tareas-android-v1.3.0-beta.apk), 1.251.754 bytes, SHA256 de GitHub `11ed80036ebffa63494006bcc0e3521b8124d76039a566ad42a87d24dd60a30d`. Release pública y no borrador. El proveedor Google real sigue pendiente de configurar.
