@@ -51,6 +51,12 @@ npm run android:assets
 gradle -p android :app:assembleDebug :app:connectedDebugAndroidTest
 ```
 
+Usa el repositorio completo o el archivo **Source code (zip)** de GitHub para compilar Android; el ZIP de la app web es una distribución separada.
+
 Para repetirlo localmente hace falta JDK 17, Android SDK 35, Gradle 8.11.1 y un emulador/dispositivo. No se incluyen SDK, APK, claves privadas ni archivos generados en el código Git.
 
 Las pruebas del emulador no sustituyen probarlo en tu modelo de celular. Los avisos con la app cerrada no se ofrecen. No se han dado por probadas cuentas reales ni una base de datos remota.
+
+## Verificación de esta descarga
+
+La ejecución [40937551900](https://github.com/enriqueortizvasquez-prog/App-apuntes/actions/runs/40937551900) finalizó con éxito, incluidas las pruebas Android y `apksigner`. El APK pesa aproximadamente 1,2 MB. La release es pública y no requiere una cuenta de GitHub para descargar.
