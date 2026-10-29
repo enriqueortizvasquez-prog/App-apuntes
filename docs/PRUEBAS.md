@@ -78,10 +78,16 @@ La instalación física y el primer acceso ya no son pendientes. La colaboració
 
 ## Tareas 1.4: invitación como texto e icono estrella
 
-- 19 pruebas unitarias/PGlite: extracción de enlace/mensaje/fragmento/código, distinción copia/colaborativo, rechazo de ambigüedad, tamaño, esquemas ejecutables y retornos OAuth.
+- 20 pruebas unitarias/PGlite: extracción de enlace/mensaje/fragmento/código, distinción copia/colaborativo, rechazo de ambigüedad, tamaño, esquemas ejecutables y retornos OAuth.
 - Suite web con API controlada: mensaje completo pegado; vista previa sin autoaceptar; exige cuenta para unirse; aceptación solo tras confirmar; invitación revocada/caducada; cancelación con respuesta tardía sin reabrir diálogos; copia local sin crear membresía; instrucciones en borrador WhatsApp.
 - No se navega ni consulta el dominio del texto pegado. Solo se usa el token en el backend ya configurado. No se persiste el mensaje ni se lee el portapapeles automáticamente.
 - Icono de estrella de cuatro puntas en SVG/PNG/Android y la marca de la app. Paleta de 20 colores, datos y URI antigua se conservan.
 - Instrumentación añadida: pegar mensaje colaborativo con API controlada en Android sin red; exige login sin aceptar automáticamente. La prueba CRUD pega un mensaje de copia, revisa antes de aceptar y restaura su respaldo.
 
 La publicación 1.4 depende del resultado de sus pruebas Android. No se da por hecha una prueba manual de pegar desde WhatsApp ni colaboración de dos personas en celulares reales.
+
+### Resultado final 1.4
+
+La ejecución [40962689887](https://github.com/enriqueortizvasquez-prog/App-apuntes/actions/runs/40962689887) de `1413fe925b8a06ab8fb3cb97a7dfa06406ab6102` finalizó correctamente: **20 unitarias/PGlite + suites web + 5 pruebas instrumentadas Android**, firma y publicación del APK. La ejecución inicial 40961756205 no publicó APK porque el analizador no reconoció el esquema propio en Android; se eliminó la dependencia de URL para ese protocolo y se añadió una regresión. El flujo corregido de copia y colaboración pegadas pasó en Android.
+
+APK publicado `tareas-android-v1.4.0-beta.apk`, 1.263.258 bytes, SHA256 `e6f5e168fab87d9f4d7e0167f4c42f08c23ec31664ffbc0d7d944ea41b111e4b`. Permanece pendiente confirmar la interacción manual desde WhatsApp y dos cuentas en celulares reales; no se modificó el backend ni se recuperaron secretos OAuth.

@@ -99,3 +99,11 @@ Si WhatsApp deja el enlace como texto:
 El receptor debe tener 1.4 para esta opción; las invitaciones de 1.3 siguen siendo válidas mientras no caduquen/se revoquen. No se cambiaron los permisos ni el servidor. No se asegura que WhatsApp convierta enlaces `apuntes://` en clicables: la solución no depende de ello. Los mensajes nuevos incluyen instrucciones. El texto completo se borra del campo al mostrar una vista previa válida y no se persiste ni envía al servidor; solo se consulta el token de una invitación colaborativa. No hay lectura automática del portapapeles.
 
 Antes de cambiar de APK beta, exporta respaldo; una firma diferente puede obligar a desinstalar la anterior. La publicación 1.4 requiere su propia prueba Android; no reemplaza la descarga 1.3. El primer inicio Google en celular ya está confirmado, pero la aceptación y sincronización entre dos cuentas reales sigue pendiente.
+
+### Publicación 1.4 verificada
+
+[Actions 40962689887](https://github.com/enriqueortizvasquez-prog/App-apuntes/actions/runs/40962689887), fuente `1413fe925b8a06ab8fb3cb97a7dfa06406ab6102`, terminó **SUCCESS** (6 min 42 s): **20 pruebas unitarias/PGlite**, suites web e **instrumentación Android de cinco pruebas**. Se probaron en Android el mensaje colaborativo pegado con API controlada, la copia pegada con confirmación, importación/respaldo offline y los regresos OAuth. La primera ejecución detectó una incompatibilidad al interpretar el esquema propio; el analizador ahora valida `apuntes://open` directamente, sin depender de URL para protocolos no estándar, y la regresión está cubierta.
+
+[Descargar APK Tareas 1.4](https://github.com/enriqueortizvasquez-prog/App-apuntes/releases/download/v1.4.0-beta/tareas-android-v1.4.0-beta.apk): **1.263.258 bytes**, SHA256 de GitHub `e6f5e168fab87d9f4d7e0167f4c42f08c23ec31664ffbc0d7d944ea41b111e4b`. Firma verificada con apksigner antes de publicar. Release pública, beta y no borrador; no se reemplazaron las descargas anteriores.
+
+La prueba entre dos cuentas reales y pegar manualmente desde WhatsApp en el celular siguen pendientes de confirmar con el propietario/receptor. Las pruebas no convierten los enlaces en pulsables en WhatsApp; permiten abrirlos pegándolos en Tareas. No hace falta volver a configurar Google.
