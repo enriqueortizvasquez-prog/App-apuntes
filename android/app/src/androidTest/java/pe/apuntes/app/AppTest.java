@@ -82,11 +82,8 @@ public class AppTest {
             assertEquals("Enlace generado: "+js("document.querySelector('#share-link').value")+"; puente: "+js("[window.APUNTES_ANDROID,typeof ApuntesAndroid?.saveFile,document.querySelector('#toast-text').textContent]"),"true",js("document.querySelector('#share-link').value.startsWith('apuntes://open#apuntes=')"));
             String link=new org.json.JSONTokener(js("document.querySelector('#share-link').value")).nextValue().toString();
             js("document.querySelector('#share-dialog [data-close]').click()");
-            InstrumentationRegistry.getInstrumentation().runOnMainSync(()->activity.startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse(link)).setPackage("pe.apuntes.app")));
-            waitFor("document.querySelector('#invite-dialog')?.open===true");
-            js("document.querySelector('#accept-invite').click()");
-            waitFor("document.querySelectorAll('#task-list .task').length===2");
-            scenario.recreate();scenario.onActivity(a->activity=a);
+            // Preview adds a second independent copy before testing backup restoration.
+            js("document.querySelector('.task-menu summary').click();document.querySelector('.share-task').click();document.querySelector('#preview-invite').click();document.querySelector('#accept-invite').click()");
             waitFor("document.querySelectorAll('#task-list .task').length===2");
             // Import bridge hands a content URI to the page. Exercise file reading and restore.
             intending(hasAction(Intent.ACTION_OPEN_DOCUMENT)).respondWith(new Instrumentation.ActivityResult(Activity.RESULT_OK,new Intent().setData(uri)));
@@ -95,6 +92,12 @@ public class AppTest {
             waitFor("!document.querySelector('#settings-dialog').open && document.querySelectorAll('#task-list .task').length===1");
             // Native wrapper should never navigate into a remotely hosted document.
             assertEquals("true",js("location.hostname==='appassets.androidplatform.net'"));
+            // Exercise the actual exported Android deep link last: ActivityScenario does
+            // not reliably track RESUMED after singleTask onNewIntent delivery.
+            InstrumentationRegistry.getInstrumentation().runOnMainSync(()->activity.startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse(link)).setPackage("pe.apuntes.app")));
+            waitFor("document.querySelector('#invite-dialog')?.open===true");
+            js("document.querySelector('#accept-invite').click()");
+            waitFor("document.querySelectorAll('#task-list .task').length===2");
             Bitmap screen=InstrumentationRegistry.getInstrumentation().getUiAutomation().takeScreenshot();
             try(FileOutputStream stream=new FileOutputStream(new File(activity.getFilesDir(),"android-prueba.png"))){screen.compress(Bitmap.CompressFormat.PNG,100,stream);}
         }finally{Intents.release();}

@@ -33,10 +33,13 @@ public class MainActivity extends Activity {
         super.onCreate(state);
         web = new WebView(this);
         web.setBackgroundColor(Color.rgb(17,17,17));
-        setContentView(web);
+        android.widget.FrameLayout container=new android.widget.FrameLayout(this);
+        container.setBackgroundColor(Color.rgb(17,17,17));
+        container.addView(web,new android.widget.FrameLayout.LayoutParams(-1,-1));
+        setContentView(container);
         // Keep content clear of Android 15 status/navigation bars and the keyboard.
         if (android.os.Build.VERSION.SDK_INT >= 30) {
-            web.setOnApplyWindowInsetsListener((view,insets)-> {
+            container.setOnApplyWindowInsetsListener((view,insets)-> {
                 android.graphics.Insets bars = insets.getInsets(android.view.WindowInsets.Type.systemBars() | android.view.WindowInsets.Type.ime());
                 view.setPadding(bars.left,bars.top,bars.right,bars.bottom);
                 return insets;
@@ -82,7 +85,7 @@ public class MainActivity extends Activity {
             }
         });
         web.addJavascriptInterface(new FileBridge(),"ApuntesAndroid");
-        String fragment=invitationFragment(getIntent().getData());
+        String fragment=state==null?invitationFragment(getIntent().getData()):null;
         web.loadUrl(START+(fragment==null?"":"#"+fragment));
     }
     private boolean isLocal(Uri uri) {
