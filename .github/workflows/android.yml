@@ -2,6 +2,17 @@ name: APK Android y pruebas en celular virtual
 on:
   push:
     branches: [arena/35b68c60-app-apuntes]
+    paths:
+      - 'android/**'
+      - '.github/workflows/android.yml'
+      - 'scripts/**'
+      - 'src/**'
+      - 'app.js'
+      - 'index.html'
+      - 'styles.css'
+      - 'config.js'
+      - 'icons/**'
+      - 'package*.json'
   workflow_dispatch:
 permissions:
   contents: write
@@ -60,10 +71,15 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
         run: |
+          if gh release view v1.1.0-beta --json assets --jq '[.assets[].name] | index("apuntes-android-v1.1.0-beta.apk") != null' 2>/dev/null | grep -q true; then
+            echo 'La descarga ya existe: se conserva su firma. Una nueva versión requiere una nueva etiqueta.'
+            exit 0
+          fi
           cp android/app/build/outputs/apk/debug/app-debug.apk apuntes-android-v1.1.0-beta.apk
           "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs apuntes-android-v1.1.0-beta.apk > verificacion-firma.txt
           sha256sum apuntes-android-v1.1.0-beta.apk > SHA256SUMS.txt
           if ! gh release view v1.1.0-beta; then
             gh release create v1.1.0-beta --target "$GITHUB_SHA" --prerelease --title 'Apuntes Android 1.1 · Beta instalable' --notes-file docs/ANDROID.md
           fi
-          gh release upload v1.1.0-beta apuntes-android-v1.1.0-beta.apk SHA256SUMS.txt verificacion-firma.txt dist/descargas/apuntes-portable.html dist/descargas/apuntes-v1.1.0-beta.zip --clobber
+          gh release upload v1.1.0-beta SHA256SUMS.txt verificacion-firma.txt dist/descargas/apuntes-portable.html dist/descargas/apuntes-v1.1.0-beta.zip --clobber
+          gh release upload v1.1.0-beta apuntes-android-v1.1.0-beta.apk
