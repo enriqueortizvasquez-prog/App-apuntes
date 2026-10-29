@@ -68,6 +68,19 @@ public class AppTest {
             assertEquals("true",js("location.hash===''"));
         }
     }
+    @Test public void pastedSharedMessagePreviewsWithoutJoiningOrLoggingIn() throws Exception {
+        try(ActivityScenario<MainActivity> scenario=ActivityScenario.launch(MainActivity.class)) {
+            scenario.onActivity(a->activity=a);
+            waitFor("!!document.querySelector('#install-app:disabled')");
+            js("window.previewRequests=0;window.fetch=async(url,options)=>{if(!url.endsWith('/rpc/preview_invite'))throw Error('No se debe aceptar ni autenticar todavía');window.previewRequests++;return new Response(JSON.stringify({title:'Espacio recibido',role:'member',count:1,expires_at:'2030-01-01T00:00:00Z'}),{status:200,headers:{'Content-Type':'application/json'}})};document.querySelector('#reset-demo').click();document.querySelector('#open-invitation').click();document.querySelector('#paste-invite-text').value='Te invito a mi curso\\napuntes://open#join=10000000-0000-0000-0000-000000000001';document.querySelector('#paste-invite-form').requestSubmit()");
+            waitFor("document.querySelector('#invite-dialog')?.open && document.querySelector('#invite-title').textContent==='Espacio recibido'");
+            assertEquals("1",js("window.previewRequests"));
+            assertEquals("true",js("document.querySelector('#accept-invite').textContent.includes('Iniciar sesión') && !sessionStorage.getItem('apuntes-session') && location.hostname==='appassets.androidplatform.net'"));
+            js("document.querySelector('#accept-invite').click()");
+            waitFor("document.querySelector('#cloud-dialog').open");
+            assertEquals("1",js("window.previewRequests"));
+        }
+    }
     @Test public void googleUsesExternalBrowser() throws Exception {
         Intents.init();
         try(ActivityScenario<MainActivity> scenario=ActivityScenario.launch(MainActivity.class)) {
@@ -128,8 +141,12 @@ public class AppTest {
             assertEquals("Enlace generado: "+js("document.querySelector('#share-link').value")+"; puente: "+js("[window.APUNTES_ANDROID,typeof ApuntesAndroid?.saveFile,document.querySelector('#toast-text').textContent]"),"true",js("document.querySelector('#share-link').value.startsWith('apuntes://open#apuntes=')"));
             String link=new org.json.JSONTokener(js("document.querySelector('#share-link').value")).nextValue().toString();
             js("document.querySelector('#share-dialog [data-close]').click()");
-            // Preview adds a second independent copy before testing backup restoration.
-            js("document.querySelector('.task-menu summary').click();document.querySelector('.share-task').click();document.querySelector('#preview-invite').click();document.querySelector('#accept-invite').click()");
+            // Paste a whole WhatsApp-style message; no clickable link is needed.
+            js("document.querySelector('#reset-demo').click();document.querySelector('#open-invitation').click();document.querySelector('#paste-invite-text').value="+JSONObject.quote("Te comparto una copia:\n"+link+"\nAbre Tareas y pega este mensaje.")+";document.querySelector('#paste-invite-form').requestSubmit()");
+            waitFor("document.querySelector('#invite-dialog')?.open===true && !document.querySelector('#paste-invite-dialog').open");
+            assertEquals("1",js("document.querySelectorAll('#task-list .task').length"));
+            assertEquals("\"\"",js("document.querySelector('#paste-invite-text').value"));
+            js("document.querySelector('#accept-invite').click()");
             waitFor("document.querySelectorAll('#task-list .task').length===2");
             // Import bridge hands a content URI to the page. Exercise file reading and restore.
             intending(hasAction(Intent.ACTION_OPEN_DOCUMENT)).respondWith(new Instrumentation.ActivityResult(Activity.RESULT_OK,new Intent().setData(uri)));

@@ -1704,3 +1704,13 @@ form > .primary {
     display: none;
   }
 }
+
+.brand > span svg {
+  width: 28px;
+  height: 28px;
+}
+#paste-invite-text {
+  width: 100%;
+  overflow-wrap: anywhere;
+  resize: vertical;
+}

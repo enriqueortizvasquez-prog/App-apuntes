@@ -9,6 +9,7 @@ import {
   nameKey,
   validBackup,
   decodeInvitation,
+  parseInvitationText,
   encodeInvitation,
 } from "./src/domain.js";
 import { Cloud } from "./src/cloud.js";
@@ -872,7 +873,13 @@ function setShareLink(link, label) {
   $("#whatsapp-share").setAttribute("aria-disabled", String(!link));
   if (link)
     $("#whatsapp-share").href =
-      "https://wa.me/?text=" + encodeURIComponent(label + "\n" + link);
+      "https://wa.me/?text=" +
+      encodeURIComponent(
+        label +
+          "\n" +
+          link +
+          "\n\nSi aparece como texto: abre Tareas → Ajustes y respaldo → Abrir invitación y pega este mensaje. Necesitas Tareas 1.4 o posterior.",
+      );
   else $("#whatsapp-share").removeAttribute("href");
 }
 function updateShare() {
@@ -928,7 +935,7 @@ function updateShare() {
   }
   setShareLink(link, "Te comparto una copia: " + currentPayload.title);
   $("#share-error").textContent = nativeAndroid()
-    ? "El receptor necesita Tareas para Android instalada. El enlace apuntes:// se abre con la app; WhatsApp puede mostrarlo solo como texto."
+    ? "Si WhatsApp lo muestra como texto, el receptor puede copiar el mensaje y pegarlo en Tareas 1.4 → Ajustes y respaldo → Abrir invitación."
     : location.protocol === "file:"
       ? "El enlace de un archivo local no puede abrirse en otro dispositivo. Comparte desde una dirección HTTPS."
       : "Solo se comparten los datos elegidos. No se comparte tu progreso, recordatorios ni notas personales.";
@@ -1026,6 +1033,58 @@ function loadInvitation() {
     notify("No se pudo abrir el enlace. Comprueba que esté completo.");
   }
 }
+let pasteRevision = 0;
+$("#paste-invite-dialog").addEventListener("close", () => pasteRevision++);
+function openPasteInvitation() {
+  pasteRevision++;
+  $("#open-pasted-invite").disabled = false;
+  $("#paste-invite-text").value = "";
+  $("#paste-invite-message").textContent = "";
+  $("#paste-invite-dialog").showModal();
+  $("#paste-invite-text").focus();
+}
+$("#open-invitation").addEventListener("click", openPasteInvitation);
+$("#open-account-invitation").addEventListener("click", openPasteInvitation);
+$("#paste-invite-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const button = $("#open-pasted-invite");
+  if (button.disabled) return;
+  button.disabled = true;
+  const revision = pasteRevision;
+  $("#paste-invite-message").textContent = "Comprobando la invitación…";
+  try {
+    const received = parseInvitationText($("#paste-invite-text").value);
+    if (received.kind === "copy") {
+      const payload = decodeInvitation(received.encoded);
+      if (!validInvitation(payload))
+        throw Error("La copia contiene datos no admitidos o está incompleta.");
+      showInvitation(payload);
+    } else {
+      const opened = await openCloudInvite(
+        received.token,
+        true,
+        () => revision === pasteRevision && $("#paste-invite-dialog").open,
+      );
+      if (!opened) return;
+    }
+    // Preserve only the validated invitation, never the full WhatsApp message.
+    // Google login can resume #join after returning from the system browser.
+    history.replaceState(
+      null,
+      "",
+      location.pathname + location.search + received.hash,
+    );
+    $("#paste-invite-text").value = "";
+    $("#paste-invite-dialog").close();
+    $("#settings-dialog").close();
+    $("#cloud-dialog").close();
+  } catch (error) {
+    if (revision === pasteRevision)
+      $("#paste-invite-message").textContent = error.message;
+  } finally {
+    if (revision === pasteRevision) button.disabled = false;
+  }
+});
 function setMenu(open) {
   $("#sidebar").classList.toggle("open", open);
   $("#open-menu").setAttribute("aria-expanded", String(open));
@@ -2013,7 +2072,7 @@ $("#create-shared-link").addEventListener("click", async () => {
     $("#share-error").textContent =
       "Invitación válida hasta " +
       new Date(info.expires_at).toLocaleString("es-PE") +
-      ". Los miembros tendrán acceso al espacio compartido.";
+      ". Si aparece como texto, cópialo y usa Ajustes y respaldo → Abrir invitación en Tareas 1.4 o posterior.";
     notify(
       "Invitación creada. La información compartida ya está en el servidor.",
     );
@@ -2029,7 +2088,7 @@ function currentShareTitle() {
         $("#share-subject").textContent
     : $("#share-subject").textContent;
 }
-async function openCloudInvite(token) {
+async function openCloudInvite(token, raise = false, isCurrent = () => true) {
   if (
     !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
       token,
@@ -2039,11 +2098,21 @@ async function openCloudInvite(token) {
     return;
   }
   if (!cloud.configured) {
+    if (raise)
+      throw Error(
+        "Primero configura el servicio en Cuenta y colaboración. Tus datos locales no cambian.",
+      );
     openCloud();
     return;
   }
   try {
-    const info = await cloud.inviteInfo(token);
+    const service = cloud;
+    const info = await service.inviteInfo(token);
+    if (cloud !== service)
+      throw Error(
+        "Cambió el servicio de colaboración. Vuelve a abrir la invitación.",
+      );
+    if (!isCurrent()) return false;
     invitation = { remoteToken: token };
     $("#invite-title").textContent = info.title;
     $("#invite-notice").textContent =
@@ -2056,7 +2125,9 @@ async function openCloudInvite(token) {
       ? "Unirme al espacio"
       : "Iniciar sesión para unirme";
     $("#invite-dialog").showModal();
+    return true;
   } catch (e) {
+    if (raise) throw e;
     notify(e.message);
   }
 }

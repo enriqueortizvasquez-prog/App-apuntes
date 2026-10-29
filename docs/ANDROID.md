@@ -1,11 +1,11 @@
-# Tareas Android 1.3 · Beta instalable
+# Tareas Android 1.4 · Beta instalable
 
 Esta versión añade un **APK real para Android 8 o posterior**, con el diseño Grafito y la app incluida dentro del instalador. No es un enlace a una página remota: crear cursos/deberes, editar, completar, calendario y respaldos funcionan sin red desde el primer inicio.
 
 ## Descargar e instalar
 
-1. En el celular Android, abre https://github.com/enriqueortizvasquez-prog/App-apuntes/releases/tag/v1.3.0-beta
-2. En **Assets / Recursos**, descarga **tareas-android-v1.3.0-beta.apk**.
+1. En el celular Android, abre https://github.com/enriqueortizvasquez-prog/App-apuntes/releases/tag/v1.4.0-beta
+2. En **Assets / Recursos**, descarga **tareas-android-v1.4.0-beta.apk**.
 3. Abre el archivo descargado. Si Android lo solicita, permite temporalmente «Instalar apps desconocidas» **solo para el navegador o gestor de archivos que estás usando**. Después puedes volver a desactivar ese permiso.
 4. Confirma «Instalar» y abre **Tareas** desde su icono.
 
@@ -24,7 +24,7 @@ El almacenamiento del APK es distinto del de Chrome: para trasladar tus deberes 
 
 ## Colaboración y acceso Google
 
-El APK 1.3 incluye el proyecto público Supabase del propietario, cuya base/RLS ya se instaló y comprobó. **El acceso Google requiere todavía configurar y activar el proveedor**, siguiendo [GOOGLE.md](GOOGLE.md). No se presenta como un servicio de autenticación ya probado con cuentas reales.
+El APK 1.4 incluye el proyecto público Supabase del propietario, cuya base/RLS ya se instaló y comprobó. El propietario ya configuró Google y confirmó el primer acceso físico desde 1.3. La colaboración con dos cuentas sigue pendiente; consulta [GOOGLE.md](GOOGLE.md).
 
 - En Cuenta y colaboración: **Entrar con Google** abre el navegador externo y regresa a `apuntes://open`.
 - PKCE S256: solo se acepta un código asociado a un acceso iniciado en este dispositivo y servicio, durante 10 minutos. No se aceptan tokens en enlaces.
@@ -84,3 +84,18 @@ Resultado: [Actions 40951528171](https://github.com/enriqueortizvasquez-prog/App
 ## Actualización: primer acceso físico confirmado
 
 El 29 de octubre de 2026 el propietario confirmó en Tareas 1.3 instalada en su celular el retorno de Google y «Sesión iniciada». Se comprobó por consulta agregada en el servidor **1 identidad Google con correo confirmado**, sin leer secretos ni tokens. Los comentarios anteriores sobre proveedor pendiente describen el estado al construir/publicar las betas. Actualmente falta probar invitación, sincronización y progreso con dos cuentas reales; el primer acceso ya no está pendiente. No se necesita reconstruir ni sustituir el APK por activar el proveedor.
+
+## Tareas 1.4: estrella e invitaciones pegadas
+
+El icono Android/web ahora es una estrella de cuatro puntas tipo rombo, de contorno claro sobre Grafito, sin la letra t.
+
+Si WhatsApp deja el enlace como texto:
+
+1. Copia el enlace o el mensaje completo.
+2. Abre **Tareas 1.4 → Ajustes y respaldo → Abrir invitación** (también aparece en Cuenta y colaboración).
+3. Pega manualmente el texto y pulsa **Ver invitación**.
+4. Revisa la vista previa y confirma **Unirme al espacio**. Si no has iniciado sesión, entra con Google primero. Para una copia, confirma **Añadir copia a mis deberes**; no se convierte en colaboración.
+
+El receptor debe tener 1.4 para esta opción; las invitaciones de 1.3 siguen siendo válidas mientras no caduquen/se revoquen. No se cambiaron los permisos ni el servidor. No se asegura que WhatsApp convierta enlaces `apuntes://` en clicables: la solución no depende de ello. Los mensajes nuevos incluyen instrucciones. El texto completo se borra del campo al mostrar una vista previa válida y no se persiste ni envía al servidor; solo se consulta el token de una invitación colaborativa. No hay lectura automática del portapapeles.
+
+Antes de cambiar de APK beta, exporta respaldo; una firma diferente puede obligar a desinstalar la anterior. La publicación 1.4 requiere su propia prueba Android; no reemplaza la descarga 1.3. El primer inicio Google en celular ya está confirmado, pero la aceptación y sincronización entre dos cuentas reales sigue pendiente.

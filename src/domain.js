@@ -124,3 +124,55 @@ export function decodeInvitation(encoded) {
     ),
   );
 }
+
+/** Extract an invitation from pasted text. Never navigate to/fetch the pasted URL. */
+export function parseInvitationText(text) {
+  if (typeof text !== "string" || !text.trim() || text.length > 40000)
+    throw Error(
+      "Pega el enlace completo o el mensaje que recibiste en WhatsApp (máximo 40.000 caracteres).",
+    );
+  const trimmed = text.trim();
+  const uuid =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  const candidates =
+    trimmed.match(/(?:apuntes:\/\/|https?:\/\/)[^\s<>"']+/gi) || [];
+  if (/^#(?:join|apuntes)=/.test(trimmed)) candidates.push(trimmed);
+  if (uuid.test(trimmed)) candidates.push("#join=" + trimmed);
+  const found = new Map();
+  for (let value of candidates) {
+    value = value.replace(/[.,;:!?)}\]>*]+$/, "");
+    let hash;
+    if (value.startsWith("#")) hash = value;
+    else {
+      let url;
+      try {
+        url = new URL(value);
+      } catch {
+        continue;
+      }
+      if (url.username || url.password) continue;
+      if (url.protocol === "apuntes:") {
+        if (
+          url.host !== "open" ||
+          (url.pathname && url.pathname !== "/") ||
+          url.search
+        )
+          continue;
+      } else if (!["https:", "http:"].includes(url.protocol)) continue;
+      hash = url.hash;
+    }
+    if (hash.startsWith("#join=") && uuid.test(hash.slice(6)))
+      found.set(hash, { kind: "shared", hash, token: hash.slice(6) });
+    else if (/^#apuntes=[A-Za-z0-9_-]{1,30000}$/.test(hash))
+      found.set(hash, { kind: "copy", hash, encoded: hash.slice(9) });
+  }
+  if (found.size > 1)
+    throw Error(
+      "El mensaje contiene varias invitaciones. Pega solo la que quieres abrir.",
+    );
+  if (!found.size)
+    throw Error(
+      "No se encontró una invitación válida de Tareas. Pega el enlace completo, sin recortarlo.",
+    );
+  return found.values().next().value;
+}

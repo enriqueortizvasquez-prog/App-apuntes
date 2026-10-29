@@ -8,6 +8,7 @@ import { runCloudTests } from "./cloud-browser.mjs";
 import { runNativeTests } from "./native-browser.mjs";
 import { runOAuthTests } from "./oauth-browser.mjs";
 import { runBrandingTests } from "./branding-browser.mjs";
+import { runPasteInviteTests } from "./paste-invite-browser.mjs";
 const server = spawn(process.execPath, ["scripts/server.mjs"], {
   env: { ...process.env, SERVE_DIR: "dist", PORT: "4173" },
   stdio: ["ignore", "pipe", "pipe"],
@@ -310,6 +311,7 @@ try {
   await runNativeTests(b, root, track);
   await runOAuthTests(b, root, track);
   await runBrandingTests(b, root, track);
+  await runPasteInviteTests(b, root, track);
   assert.deepEqual(errors, []);
   console.log(
     "✓ Navegador: creación, edición, completados/deshacer, traslado sin pérdidas, copias independientes, respaldo, calendario, PWA offline, móvil, subruta y HTML file://. Sin errores de ejecución.",

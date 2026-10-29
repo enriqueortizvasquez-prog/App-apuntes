@@ -1,4 +1,4 @@
-const CACHE = "apuntes-v1.3.0-beta";
+const CACHE = "apuntes-v1.4.0-beta";
 const ASSETS = [
   "./",
   "./index.html",

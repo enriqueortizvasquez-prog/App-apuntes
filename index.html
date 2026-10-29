@@ -28,7 +28,17 @@
         >
           ×
         </button>
-        <div class="brand"><span>t</span>tareas.</div>
+        <div class="brand">
+          <span aria-hidden="true"
+            ><svg viewBox="0 0 512 512" fill="none">
+              <path
+                d="M256 92Q276 236 420 256Q276 276 256 420Q236 276 92 256Q236 236 256 92Z"
+                stroke="currentColor"
+                stroke-width="20"
+                stroke-linejoin="round"
+              /></svg></span
+          >tareas.
+        </div>
         <div class="university">
           <span>U</span>
           <div>Mi universidad<small>Tu espacio, a tu ritmo</small></div>
@@ -493,6 +503,50 @@
         abre un borrador; tú decides si enviarlo.
       </p>
     </dialog>
+    <dialog id="paste-invite-dialog" class="wide">
+      <form id="paste-invite-form">
+        <div class="modal-heading">
+          <h2>Abrir invitación</h2>
+          <button
+            type="button"
+            class="icon"
+            data-close="paste-invite-dialog"
+            aria-label="Cerrar"
+          >
+            ×
+          </button>
+        </div>
+        <p class="hint">
+          ¿WhatsApp muestra el enlace como texto? Copia el enlace o el mensaje
+          completo y pégalo aquí. Funciona para invitaciones colaborativas y
+          copias.
+        </p>
+        <label class="field"
+          >Enlace o mensaje recibido<textarea
+            id="paste-invite-text"
+            rows="5"
+            maxlength="40000"
+            required
+            spellcheck="false"
+            autocomplete="off"
+            placeholder="apuntes://open#join=…"
+          ></textarea>
+        </label>
+        <p class="hint" id="paste-invite-message" role="status"></p>
+        <p class="hint">
+          Primero verás una vista previa. No se acepta la invitación ni se añade
+          nada hasta que lo confirmes. No leemos tu portapapeles
+          automáticamente.
+        </p>
+        <div class="dialog-actions">
+          <button type="button" class="text" data-close="paste-invite-dialog">
+            Cancelar</button
+          ><button type="submit" class="primary" id="open-pasted-invite">
+            Ver invitación
+          </button>
+        </div>
+      </form>
+    </dialog>
     <dialog id="invite-dialog" class="wide">
       <div class="modal-heading">
         <div>
@@ -578,8 +632,9 @@
           Descargar datos sin procesar</button
         ><a class="secondary" href="./descargas/tareas-portable.html" download
           >Descargar HTML sin instalación</a
-        ><a class="secondary" href="./descargas/tareas-v1.3.0-beta.zip" download
+        ><a class="secondary" href="./descargas/tareas-v1.4.0-beta.zip" download
           >Descargar paquete ZIP</a
+        ><button class="secondary" id="open-invitation">Abrir invitación</button
         ><button class="secondary" id="open-cloud">Cuenta y colaboración</button
         ><button class="text" id="load-examples">
           Cargar datos de ejemplo (app vacía)
@@ -591,7 +646,7 @@
         esta app.
       </p>
       <p class="hint">
-        Versión 1.3.0-beta ·
+        Versión 1.4.0-beta ·
         <a href="./PRIVACY.md" target="_blank" rel="noopener">Privacidad</a> ·
         <a href="./docs/INSTALAR.md" target="_blank" rel="noopener"
           >Cómo instalar</a
@@ -635,6 +690,9 @@
           ×
         </button>
       </div>
+      <button class="secondary" id="open-account-invitation">
+        Abrir invitación
+      </button>
       <p class="notice" id="cloud-status"></p>
       <p class="hint" id="cloud-backend"></p>
       <button class="secondary" id="configure-cloud">

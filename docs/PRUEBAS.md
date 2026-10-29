@@ -75,3 +75,13 @@ Resultado local: **16 pruebas unitarias/PGlite y suite web completas**, sin erro
 El 29 de octubre de 2026 el propietario confirmó, mediante una captura del APK instalado, el regreso desde Google y la pantalla de cuenta con «Sesión iniciada». Se hizo una consulta agregada de solo lectura: `google_verified_accounts=1`, `shared_spaces=0`, `shared_tasks=0`. Esto verifica la identidad real en el servidor sin recuperar secretos OAuth, contraseñas ni tokens, y sin modificar datos.
 
 La instalación física y el primer acceso ya no son pendientes. La colaboración entre dos cuentas sí sigue pendiente: aún no se ha creado/aceptado una invitación ni comprobado propagación y progreso individual desde dos cuentas reales. Las pruebas de SQL/RLS y las automatizadas anteriores siguen siendo evidencia separada, no sustitutos de ese flujo.
+
+## Tareas 1.4: invitación como texto e icono estrella
+
+- 19 pruebas unitarias/PGlite: extracción de enlace/mensaje/fragmento/código, distinción copia/colaborativo, rechazo de ambigüedad, tamaño, esquemas ejecutables y retornos OAuth.
+- Suite web con API controlada: mensaje completo pegado; vista previa sin autoaceptar; exige cuenta para unirse; aceptación solo tras confirmar; invitación revocada/caducada; cancelación con respuesta tardía sin reabrir diálogos; copia local sin crear membresía; instrucciones en borrador WhatsApp.
+- No se navega ni consulta el dominio del texto pegado. Solo se usa el token en el backend ya configurado. No se persiste el mensaje ni se lee el portapapeles automáticamente.
+- Icono de estrella de cuatro puntas en SVG/PNG/Android y la marca de la app. Paleta de 20 colores, datos y URI antigua se conservan.
+- Instrumentación añadida: pegar mensaje colaborativo con API controlada en Android sin red; exige login sin aceptar automáticamente. La prueba CRUD pega un mensaje de copia, revisa antes de aceptar y restaura su respaldo.
+
+La publicación 1.4 depende del resultado de sus pruebas Android. No se da por hecha una prueba manual de pegar desde WhatsApp ni colaboración de dos personas en celulares reales.

@@ -7,7 +7,10 @@ export async function runBrandingTests(browser, root, track) {
     await page.setViewport({ width: 1440, height: 1000 });
     await page.goto(root, { waitUntil: "networkidle0" });
     assert.equal(await page.title(), "Tareas · Tu universidad, en orden");
-    assert.equal(await page.$eval(".brand", (e) => e.textContent), "ttareas.");
+    assert.equal(
+      await page.$eval(".brand", (e) => e.textContent.replace(/\s/g, "")),
+      "tareas.",
+    );
     const palette = await page.$$eval("#course-color option", (es) =>
       es.map((e) => ({ value: e.value, name: e.textContent })),
     );

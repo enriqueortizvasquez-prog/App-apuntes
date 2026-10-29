@@ -1,5 +1,12 @@
 # Tareas
 
+## Novedades de 1.4
+
+- Icono de **estrella de cuatro puntas tipo rombo**, como la estrella del estado vacío, en Android y la web.
+- **Ajustes y respaldo → Abrir invitación**: pega el enlace o el mensaje de WhatsApp completo, aunque no sea pulsable. También disponible desde Cuenta y colaboración.
+- Vista previa y confirmación antes de unirse/importar. Los enlaces de 1.3 siguen siendo compatibles; el receptor necesita 1.4 para pegarlos. No se lee el portapapeles automáticamente ni se abre la web del texto pegado.
+- El acceso Google ya funcionó en el celular del propietario. Aún falta comprobar el flujo completo entre dos cuentas reales; las pruebas automáticas de invitaciones usan API controlada.
+
 Antes **Apuntes**: mismo proyecto, datos y enlaces compatibles. La versión 1.3 cambia el nombre visible y el icono a Tareas y amplía de 6 a **20 colores pastel** para cursos. No cambia los permisos ni activa Google automáticamente. El propietario ya creó un proyecto de Google llamado **tareas**; ya completó el primer inicio Google en su celular; falta probar colaboración con otra cuenta.
 
 Una app gratuita para organizar los deberes de la universidad. Diseño **Grafito**, sin anuncios y sin suscripción propia. Instalable como PWA en Android, iPhone/iPad y escritorio desde un sitio HTTPS. También se entrega un **HTML independiente** que se puede descargar y abrir sin instalar nada.
@@ -32,11 +39,11 @@ El esquema y los permisos ya se instalaron y probaron en el proyecto Supabase de
 
 ## Android: APK instalable
 
-La versión **1.3.0-beta** añade un APK con la app incluida, almacenamiento local, respaldos nativos y enlaces que abre Android. La compilación se publica en [Releases](https://github.com/enriqueortizvasquez-prog/App-apuntes/releases/tag/v1.3.0-beta) solo tras superar las pruebas instrumentadas. Consulta [instalación, firma beta y límites](docs/ANDROID.md). **El acceso Google ya se comprobó en un celular; la colaboración entre dos personas sigue pendiente.**
+La versión **1.4.0-beta** añade un APK con la app incluida, almacenamiento local, respaldos nativos y enlaces que abre Android. La compilación se publica en [Releases](https://github.com/enriqueortizvasquez-prog/App-apuntes/releases/tag/v1.4.0-beta) solo tras superar las pruebas instrumentadas. Consulta [instalación, firma beta y límites](docs/ANDROID.md). **El acceso Google ya se comprobó en un celular; la colaboración entre dos personas sigue pendiente.**
 
 ## Usar o descargar gratis
 
-1. Descarga `apuntes-portable.html` desde la release  o desde el archivo entregado en la conversación.
+1. Descarga `tareas-portable.html` desde la release  o desde el archivo entregado en la conversación.
 2. Ábrelo en un navegador moderno: todos los datos locales se quedan en ese navegador. El archivo portable no se instala como PWA y sus enlaces `file://` no son accesibles por otras personas.
 3. Para instalar como app, usa la publicación HTTPS de `dist/`. Ver [instalación](docs/INSTALAR.md).
 4. Para preparar la colaboración real, consulta [configuración](docs/COLABORACION.md) y [privacidad](PRIVACY.md).
@@ -59,7 +66,7 @@ npm run dev       # 0.0.0.0:3000
 
 - `dist/`: sitio estático listo para HTTPS, incluyendo rutas relativas compatibles con `/App-apuntes/`.
 - `dist/descargas/tareas-portable.html`: una sola página con JS/CSS incrustados.
-- `dist/descargas/tareas-v1.3.0-beta.zip`: sitio, HTML portable, instrucciones y SQL opcional.
+- `dist/descargas/tareas-v1.4.0-beta.zip`: sitio, HTML portable, instrucciones y SQL opcional.
 
 Para servir el resultado de producción: `SERVE_DIR=dist npm run dev`. No publiques `node_modules` ni archivos de pruebas/credenciales.
 

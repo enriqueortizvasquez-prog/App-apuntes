@@ -18,7 +18,7 @@ Abre la app una vez con conexión para que se descarguen los archivos. Después 
 
 ## APK para Android
 
-La versión 1.3.0-beta incluye un APK instalable sin depender de una página remota. Consulta `ANDROID.md` para descargar, instalar, guardar respaldos y revisar las limitaciones de su firma de prueba. El APK no es una aplicación para iPhone. Añade acceso Google en el navegador, pendiente de configurar el proveedor (`GOOGLE.md`); exporta respaldo antes de cambiar desde una beta anterior porque la firma puede ser distinta.
+La versión 1.4.0-beta incluye un APK instalable sin depender de una página remota. Consulta `ANDROID.md` para descargar, instalar, guardar respaldos y revisar las limitaciones de su firma de prueba. El APK no es una aplicación para iPhone. Incluye acceso Google en navegador (el primer acceso real ya se confirmó) y la opción de pegar invitaciones (`GOOGLE.md`); exporta respaldo antes de cambiar desde una beta anterior porque la firma puede ser distinta.
 
 ## Publicación
 
@@ -31,3 +31,7 @@ Ajustes y respaldo → Descargar respaldo JSON. Para recuperarlo: Importar respa
 ## Avisos y almacenamiento
 
 Los recordatorios no son una alarma del sistema garantizada. Solo se revisan mientras el navegador ejecute la app. Para entregas críticas usa también una alarma de tu dispositivo. No hay integración automática con Google Calendar en esta versión.
+
+## Invitación que WhatsApp muestra como texto
+
+Copia el mensaje o enlace y, en **Tareas 1.4**, abre **Ajustes y respaldo → Abrir invitación → pegar → Ver invitación**. Revisa la vista previa antes de unirte. Los enlaces de versiones anteriores sirven sin generar uno nuevo, mientras estén vigentes. Para entrar en un espacio necesitas tu propia cuenta; en modo de prueba Google exige usuarios autorizados.

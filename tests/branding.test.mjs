@@ -25,5 +25,6 @@ test("Tareas cambia el nombre instalado sin cambiar identidad, almacenamiento o 
     new URL("../icons/icon.svg", import.meta.url),
     "utf8",
   );
-  assert.match(icon, />t<\/text>/);
+  assert.match(icon, /data-logo="four-point-star"/);
+  assert.doesNotMatch(icon, /<text/);
 });

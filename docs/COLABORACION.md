@@ -9,6 +9,10 @@ La descarga funciona sin este paso. La app no crea una base de datos automática
 5. Ejecuta pruebas y build; vuelve a publicar `dist/`. El HTML portable también contendrá la configuración pública. Mantén RLS y los permisos del SQL habilitados.
 6. Prueba con **dos cuentas distintas** en navegadores/perfiles distintos antes de ofrecerlo a compañeros.
 
+## Abrir una invitación recibida como texto
+
+Desde 1.4: copia el enlace/mensaje y usa **Ajustes y respaldo → Abrir invitación → Ver invitación**. También está en Cuenta y colaboración. No depende de enlaces pulsables en WhatsApp, no lee automáticamente el portapapeles y no acepta nada sin confirmación. La preview colaborativa se consulta sin sesión, pero unirse requiere Auth. La invitación `#join=` se conserva durante el acceso Google. Si la invitación está revocada/caducada o falla la red, se muestra el error sin cambiar datos. Las copias `#apuntes=` se validan y se importan únicamente como copias.
+
 ## Flujo
 
 - En un deber o curso, Compartir → Colaborativo → iniciar sesión → crear invitación.

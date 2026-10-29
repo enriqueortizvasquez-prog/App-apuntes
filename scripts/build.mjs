@@ -85,6 +85,8 @@ for (const file of [
   "scripts/browser-util.mjs",
   "scripts/icons.mjs",
   "tests/domain.test.mjs",
+  "tests/paste-invite.test.mjs",
+  "tests/paste-invite-browser.mjs",
   "tests/branding-browser.mjs",
   "tests/cloud.test.mjs",
   "tests/oauth.test.mjs",
@@ -98,11 +100,11 @@ for (const file of [
   archive["Tareas/" + file] = new Uint8Array(await readFile(file));
 }
 archive["Tareas/LEEME.txt"] = strToU8(
-  "TAREAS 1.3.0-beta — GRATIS\n\nSin instalar: abre descargas/tareas-portable.html.\nPWA: publica los archivos del sitio en un alojamiento HTTPS.\nDesarrollo: instala Node.js 22 y ejecuta npm ci, npm test, npm run build y npm run dev.\nGuarda tus datos: Ajustes y respaldo > Descargar respaldo JSON.\nEl servicio público de colaboración está incluido. El acceso Google requiere activar el proveedor; consulta docs/GOOGLE.md.\nEl repositorio es público por autorización del propietario.\n",
+  "TAREAS 1.4.0-beta — GRATIS\n\nSin instalar: abre descargas/tareas-portable.html.\nPWA: publica los archivos del sitio en un alojamiento HTTPS.\nDesarrollo: instala Node.js 22 y ejecuta npm ci, npm test, npm run build y npm run dev.\nGuarda tus datos: Ajustes y respaldo > Descargar respaldo JSON.\nEl servicio público de colaboración está incluido. El acceso Google requiere activar el proveedor; consulta docs/GOOGLE.md.\nEl repositorio es público por autorización del propietario.\n",
 );
 archive["Tareas/descargas/tareas-portable.html"] = strToU8(html);
 await writeFile(
-  "dist/descargas/tareas-v1.3.0-beta.zip",
+  "dist/descargas/tareas-v1.4.0-beta.zip",
   zipSync(archive, { level: 9 }),
 );
 console.log("Build listo: dist/ · HTML independiente · ZIP descargable");

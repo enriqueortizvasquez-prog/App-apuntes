@@ -19,6 +19,10 @@ La caché de la PWA contiene solo archivos estáticos, nunca respuestas de auten
 
 Las notificaciones se piden solo al pulsar el botón correspondiente. No se solicita acceso a contactos, ubicación, cámara ni archivos salvo el respaldo que tú selecciones. Los avisos solo se comprueban con la app abierta y en ejecución. Google Calendar no está conectado automáticamente.
 
+## Pegar una invitación
+
+El texto se introduce manualmente en «Abrir invitación»; no hay lectura automática del portapapeles. Se extrae una invitación reconocida sin abrir el dominio del enlace. La vista previa colaborativa envía solo el token al proyecto configurado; no el resto del mensaje de WhatsApp. Las copias se decodifican localmente. El campo se vacía después de una vista previa válida; no se persiste el mensaje completo ni se acepta la invitación sin confirmación. El token validado puede quedar temporalmente en el fragmento de la página para continuar tras iniciar sesión y se elimina al aceptar. Compártelo solo con personas autorizadas.
+
 ## Acceso con Google
 
 Es opcional para usar datos locales. Se abre el navegador del sistema y Google comparte con Supabase la identidad básica (identificador, correo y perfil) para autenticar tu cuenta. Tareas solo utiliza ID/correo de la sesión Supabase; no pide leer Gmail, Drive, Calendar ni contactos. Las políticas de Google y Supabase se aplican a ese proceso. Nunca introduzcas la contraseña Google dentro de Tareas.
