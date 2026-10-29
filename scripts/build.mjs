@@ -70,10 +70,12 @@ html = html.replace(
 );
 if (/script[^>]*src=|link[^>]*rel="stylesheet"/.test(html))
   throw Error("El HTML portable aún depende de archivos externos.");
+await writeFile("dist/descargas/tareas-portable.html", html);
+// Keep previously distributed web download URLs working after the rename.
 await writeFile("dist/descargas/apuntes-portable.html", html);
 const archive = {};
 for (const file of files)
-  archive["Apuntes/" + file] = new Uint8Array(await readFile(file));
+  archive["Tareas/" + file] = new Uint8Array(await readFile(file));
 for (const file of [
   "package.json",
   "package-lock.json",
@@ -83,6 +85,7 @@ for (const file of [
   "scripts/browser-util.mjs",
   "scripts/icons.mjs",
   "tests/domain.test.mjs",
+  "tests/branding-browser.mjs",
   "tests/cloud.test.mjs",
   "tests/oauth.test.mjs",
   "tests/oauth-browser.mjs",
@@ -92,14 +95,14 @@ for (const file of [
   "tests/native.test.mjs",
   "tests/native-browser.mjs",
 ]) {
-  archive["Apuntes/" + file] = new Uint8Array(await readFile(file));
+  archive["Tareas/" + file] = new Uint8Array(await readFile(file));
 }
-archive["Apuntes/LEEME.txt"] = strToU8(
-  "APUNTES 1.2.0-beta — GRATIS\n\nSin instalar: abre descargas/apuntes-portable.html.\nPWA: publica los archivos del sitio en un alojamiento HTTPS.\nDesarrollo: instala Node.js 22 y ejecuta npm ci, npm test, npm run build y npm run dev.\nGuarda tus datos: Ajustes y respaldo > Descargar respaldo JSON.\nEl servicio público de colaboración está incluido. El acceso Google requiere activar el proveedor; consulta docs/GOOGLE.md.\nEl repositorio es público por autorización del propietario.\n",
+archive["Tareas/LEEME.txt"] = strToU8(
+  "TAREAS 1.3.0-beta — GRATIS\n\nSin instalar: abre descargas/tareas-portable.html.\nPWA: publica los archivos del sitio en un alojamiento HTTPS.\nDesarrollo: instala Node.js 22 y ejecuta npm ci, npm test, npm run build y npm run dev.\nGuarda tus datos: Ajustes y respaldo > Descargar respaldo JSON.\nEl servicio público de colaboración está incluido. El acceso Google requiere activar el proveedor; consulta docs/GOOGLE.md.\nEl repositorio es público por autorización del propietario.\n",
 );
-archive["Apuntes/descargas/apuntes-portable.html"] = strToU8(html);
+archive["Tareas/descargas/tareas-portable.html"] = strToU8(html);
 await writeFile(
-  "dist/descargas/apuntes-v1.2.0-beta.zip",
+  "dist/descargas/tareas-v1.3.0-beta.zip",
   zipSync(archive, { level: 9 }),
 );
 console.log("Build listo: dist/ · HTML independiente · ZIP descargable");

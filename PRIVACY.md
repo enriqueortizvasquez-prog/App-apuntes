@@ -1,4 +1,4 @@
-# Privacidad de Apuntes
+# Privacidad de Tareas
 
 La app no incorpora anuncios, analítica, seguimiento ni scripts de terceros. No requiere cuenta para usar datos locales. Sus archivos, iconos y tipografías del sistema no dependen de un CDN.
 
@@ -12,7 +12,7 @@ La caché de la PWA contiene solo archivos estáticos, nunca respuestas de auten
 
 - Una copia incluye los títulos, cursos, fechas y los datos opcionales elegidos. Su contenido viaja en el fragmento del enlace; quien tenga el enlace puede leerlo. No es revocable ni sincroniza cambios.
 - WhatsApp solo se abre por una acción tuya con un borrador. No se envía automáticamente; se aplican las políticas de WhatsApp cuando uses ese canal.
-- El APK 1.2 contiene la conexión pública al proyecto Supabase del propietario. No sube tus deberes locales por abrir la app. Al entrar o colaborar, se envían el correo/credenciales de acceso, pertenencia y roles, contenido común de deberes, invitaciones y progreso individual a ese servicio. Cada persona solo accede a sus progresos y al contenido de sus espacios conforme a las políticas de servidor. Las notas personales y los recordatorios siguen siendo locales.
+- El APK 1.3 contiene la conexión pública al proyecto Supabase del propietario. No sube tus deberes locales por abrir la app. Al entrar o colaborar, se envían el correo/credenciales de acceso, pertenencia y roles, contenido común de deberes, invitaciones y progreso individual a ese servicio. Cada persona solo accede a sus progresos y al contenido de sus espacios conforme a las políticas de servidor. Las notas personales y los recordatorios siguen siendo locales.
 - El proveedor de alojamiento puede registrar accesos e IPs. El propietario debe revisar términos, cuotas, retención y ubicación de datos de sus proveedores antes de abrir la app a otras personas.
 
 ## Permisos
@@ -21,9 +21,9 @@ Las notificaciones se piden solo al pulsar el botón correspondiente. No se soli
 
 ## Acceso con Google
 
-Es opcional para usar datos locales. Se abre el navegador del sistema y Google comparte con Supabase la identidad básica (identificador, correo y perfil) para autenticar tu cuenta. Apuntes solo utiliza ID/correo de la sesión Supabase; no pide leer Gmail, Drive, Calendar ni contactos. Las políticas de Google y Supabase se aplican a ese proceso. Nunca introduzcas la contraseña Google dentro de Apuntes.
+Es opcional para usar datos locales. Se abre el navegador del sistema y Google comparte con Supabase la identidad básica (identificador, correo y perfil) para autenticar tu cuenta. Tareas solo utiliza ID/correo de la sesión Supabase; no pide leer Gmail, Drive, Calendar ni contactos. Las políticas de Google y Supabase se aplican a ese proceso. Nunca introduzcas la contraseña Google dentro de Tareas.
 
-El verificador PKCE y el identificador de una invitación pendiente se guardan temporalmente en almacenamiento local. Solo son válidos durante 10 minutos para el mismo servicio y retorno, y se consumen antes del intercambio del código. Si abandonas el navegador sin volver, el dato caducado puede permanecer hasta el siguiente intento; no permite iniciar sesión una vez caducado. La app no conserva tokens de acceso de Google ni su secreto OAuth. El código de retorno se borra del historial de la vista local; los tokens Supabase quedan solo en sessionStorage, no en respaldos. El proveedor puede mantener su propia sesión en el navegador; cerrar sesión en Apuntes no cierra tu cuenta de Google en otras aplicaciones.
+El verificador PKCE y el identificador de una invitación pendiente se guardan temporalmente en almacenamiento local. Solo son válidos durante 10 minutos para el mismo servicio y retorno, y se consumen antes del intercambio del código. Si abandonas el navegador sin volver, el dato caducado puede permanecer hasta el siguiente intento; no permite iniciar sesión una vez caducado. La app no conserva tokens de acceso de Google ni su secreto OAuth. El código de retorno se borra del historial de la vista local; los tokens Supabase quedan solo en sessionStorage, no en respaldos. El proveedor puede mantener su propia sesión en el navegador; cerrar sesión en Tareas no cierra tu cuenta de Google en otras aplicaciones.
 
 ## Borrar o exportar
 

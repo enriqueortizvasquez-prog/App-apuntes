@@ -1,13 +1,13 @@
-# Apuntes Android 1.2 · Beta instalable
+# Tareas Android 1.3 · Beta instalable
 
 Esta versión añade un **APK real para Android 8 o posterior**, con el diseño Grafito y la app incluida dentro del instalador. No es un enlace a una página remota: crear cursos/deberes, editar, completar, calendario y respaldos funcionan sin red desde el primer inicio.
 
 ## Descargar e instalar
 
-1. En el celular Android, abre https://github.com/enriqueortizvasquez-prog/App-apuntes/releases/tag/v1.2.0-beta
-2. En **Assets / Recursos**, descarga **apuntes-android-v1.2.0-beta.apk**.
+1. En el celular Android, abre https://github.com/enriqueortizvasquez-prog/App-apuntes/releases/tag/v1.3.0-beta
+2. En **Assets / Recursos**, descarga **tareas-android-v1.3.0-beta.apk**.
 3. Abre el archivo descargado. Si Android lo solicita, permite temporalmente «Instalar apps desconocidas» **solo para el navegador o gestor de archivos que estás usando**. Después puedes volver a desactivar ese permiso.
-4. Confirma «Instalar» y abre **Apuntes** desde su icono.
+4. Confirma «Instalar» y abre **Tareas** desde su icono.
 
 No desactives Play Protect ni otras protecciones del dispositivo. Si Android muestra un bloqueo de seguridad distinto del permiso de instalación, no lo fuerces: revisa el mensaje antes de continuar. No es una publicación en Google Play ni una aplicación para iPhone.
 
@@ -24,7 +24,7 @@ El almacenamiento del APK es distinto del de Chrome: para trasladar tus deberes 
 
 ## Colaboración y acceso Google
 
-El APK 1.2 incluye el proyecto público Supabase del propietario, cuya base/RLS ya se instaló y comprobó. **El acceso Google requiere todavía configurar y activar el proveedor**, siguiendo [GOOGLE.md](GOOGLE.md). No se presenta como un servicio de autenticación ya probado con cuentas reales.
+El APK 1.3 incluye el proyecto público Supabase del propietario, cuya base/RLS ya se instaló y comprobó. **El acceso Google requiere todavía configurar y activar el proveedor**, siguiendo [GOOGLE.md](GOOGLE.md). No se presenta como un servicio de autenticación ya probado con cuentas reales.
 
 - En Cuenta y colaboración: **Entrar con Google** abre el navegador externo y regresa a `apuntes://open`.
 - PKCE S256: solo se acepta un código asociado a un acceso iniciado en este dispositivo y servicio, durante 10 minutos. No se aceptan tokens en enlaces.
@@ -68,3 +68,11 @@ La ejecución [40944333232](https://github.com/enriqueortizvasquez-prog/App-apun
 [Descargar APK 1.2](https://github.com/enriqueortizvasquez-prog/App-apuntes/releases/download/v1.2.0-beta/apuntes-android-v1.2.0-beta.apk): 1.251.238 bytes. SHA256 informado por GitHub para el archivo publicado: `b78dd8c8f350aab07f8c7dbef37372fe2403061cb01b295b643c8280a6ddf0cc`. Release pública no borrador, beta e inmutable. No se modificó la descarga anterior.
 
 **Esto no prueba el consentimiento de una cuenta Google real.** El proveedor sigue pendiente de configurar por el propietario; el APK comprueba ese estado y no simula un acceso. No publiques el secreto OAuth ni desactives la verificación de identidad.
+
+## Cambio de nombre: Tareas 1.3
+
+Nombre visible, iconos web/Android, notificaciones y descargas actualizados a **Tareas**. Los cursos ahora ofrecen 20 colores pastel, manteniendo los 6 originales y sus valores. Los colores elegidos se conservan en respaldos, copias y sincronización. El diseño Grafito y los indicadores de vencimiento no cambian.
+
+Se conservan el identificador Android `pe.apuntes.app`, las claves de almacenamiento y `apuntes://open` para no romper datos ni invitaciones ni el retorno autorizado en Supabase. El proyecto Google existente se llama **tareas**; el nombre no significa que OAuth ya esté activado. Exporta respaldo antes de cambiar de APK beta por la posible diferencia de firma.
+
+La publicación 1.3 está condicionada a sus propias pruebas. La descarga 1.2 no se modifica.

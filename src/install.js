@@ -22,7 +22,7 @@ export function setupInstall(notify) {
   });
   window.addEventListener("appinstalled", () => {
     button.textContent = "App instalada";
-    notify("Apuntes ya está instalada.");
+    notify("Tareas ya está instalada.");
   });
   const status = document.querySelector("#connection-status");
   let offlineReady = location.protocol === "file:" || nativeAndroid();
@@ -51,7 +51,7 @@ export function setupInstall(notify) {
               navigator.serviceWorker.controller
             )
               notify(
-                "Hay una actualización. Cierra todas las ventanas de Apuntes y vuelve a abrir.",
+                "Hay una actualización. Cierra todas las ventanas de Tareas y vuelve a abrir.",
               );
           });
         check(reg.installing);

@@ -59,3 +59,9 @@ El 29 de octubre se consultó Auth real: `external_google_enabled=false`, Client
 [40944333232](https://github.com/enriqueortizvasquez-prog/App-apuntes/actions/runs/40944333232), revisión `55aa71757823fa294b4507173e44c9709c37c789`: **SUCCESS**. Compilación, suites web y cuatro pruebas instrumentadas, firma y publicación de la nueva beta 1.2 completadas. La primera ejecución 40943396262 detectó un retorno cálido que solo cambiaba el fragmento, sin recargar el WebView; se corrigió el manejo de hashchange y se añadió una regresión de navegador. La descarga no se publicó hasta pasar la ejecución corregida.
 
 El APK real pesa 1.251.238 bytes; su SHA256 es `b78dd8c8f350aab07f8c7dbef37372fe2403061cb01b295b643c8280a6ddf0cc`. Las dos ejecuciones generales de CI del mismo commit (40944333780 y 40944342815) también finalizaron correctamente. `npm audit` completo: 0 vulnerabilidades.
+
+## Tareas 1.3: nombre y paleta
+
+La versión 1.3 conserva la identidad técnica y los datos de Apuntes, pero cambia el nombre visible a **Tareas**, los iconos a la letra t y amplía la paleta de 6 a **20 colores**. Una prueba adicional comprueba manifest/etiqueta Android e identidad antigua; la suite web crea 20 cursos con todos los colores, verifica sus valores tras recargar y en las tarjetas, y comprueba el nombre y la paleta de la descarga portable y del diálogo móvil. La prueba Android verifica la etiqueta instalada, las 20 opciones y el nuevo color turquesa en el respaldo JSON.
+
+Resultado local: **16 pruebas unitarias/PGlite y suite web completas**, sin errores JavaScript. La publicación del APK 1.3 depende de su propia ejecución Android; no sustituye las descargas 1.1/1.2. OAuth Google real sigue pendiente de activar en el proyecto Google existente **tareas**; no hay que crear otro proyecto ni contratar facturación.

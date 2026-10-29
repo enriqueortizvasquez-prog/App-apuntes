@@ -1,4 +1,6 @@
-# Apuntes
+# Tareas
+
+Antes **Apuntes**: mismo proyecto, datos y enlaces compatibles. La versión 1.3 cambia el nombre visible y el icono a Tareas y amplía de 6 a **20 colores pastel** para cursos. No cambia los permisos ni activa Google automáticamente. El propietario ya creó un proyecto de Google llamado **tareas**; todavía hay que completar OAuth.
 
 Una app gratuita para organizar los deberes de la universidad. Diseño **Grafito**, sin anuncios y sin suscripción propia. Instalable como PWA en Android, iPhone/iPad y escritorio desde un sitio HTTPS. También se entrega un **HTML independiente** que se puede descargar y abrir sin instalar nada.
 
@@ -30,7 +32,7 @@ El esquema y los permisos ya se instalaron y probaron en el proyecto Supabase de
 
 ## Android: APK instalable
 
-La versión **1.2.0-beta** añade un APK con la app incluida, almacenamiento local, respaldos nativos y enlaces que abre Android. La compilación se publica en [Releases](https://github.com/enriqueortizvasquez-prog/App-apuntes/releases/tag/v1.2.0-beta) solo tras superar las pruebas instrumentadas. Consulta [instalación, firma beta y límites](docs/ANDROID.md). **No se presenta como colaboración ya probada:** falta activar el proveedor Google.
+La versión **1.3.0-beta** añade un APK con la app incluida, almacenamiento local, respaldos nativos y enlaces que abre Android. La compilación se publica en [Releases](https://github.com/enriqueortizvasquez-prog/App-apuntes/releases/tag/v1.3.0-beta) solo tras superar las pruebas instrumentadas. Consulta [instalación, firma beta y límites](docs/ANDROID.md). **No se presenta como colaboración ya probada:** falta activar el proveedor Google.
 
 ## Usar o descargar gratis
 
@@ -56,8 +58,8 @@ npm run dev       # 0.0.0.0:3000
 `npm run build` produce:
 
 - `dist/`: sitio estático listo para HTTPS, incluyendo rutas relativas compatibles con `/App-apuntes/`.
-- `dist/descargas/apuntes-portable.html`: una sola página con JS/CSS incrustados.
-- `dist/descargas/apuntes-v1.2.0-beta.zip`: sitio, HTML portable, instrucciones y SQL opcional.
+- `dist/descargas/tareas-portable.html`: una sola página con JS/CSS incrustados.
+- `dist/descargas/tareas-v1.3.0-beta.zip`: sitio, HTML portable, instrucciones y SQL opcional.
 
 Para servir el resultado de producción: `SERVE_DIR=dist npm run dev`. No publiques `node_modules` ni archivos de pruebas/credenciales.
 

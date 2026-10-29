@@ -761,14 +761,14 @@ function deliverReminder(message) {
         navigator.serviceWorker.getRegistration().then((reg) => {
           if (reg)
             reg
-              .showNotification("Apuntes · Tus entregas", {
+              .showNotification("Tareas · Tus entregas", {
                 body: message,
                 tag: "apuntes-reminder",
               })
               .catch(() => {});
         });
       }
-      new Notification("Apuntes · Tus entregas", {
+      new Notification("Tareas · Tus entregas", {
         body: message,
         tag: "apuntes-local-reminder",
       });
@@ -928,7 +928,7 @@ function updateShare() {
   }
   setShareLink(link, "Te comparto una copia: " + currentPayload.title);
   $("#share-error").textContent = nativeAndroid()
-    ? "El receptor necesita Apuntes para Android instalada. El enlace apuntes:// se abre con la app; WhatsApp puede mostrarlo solo como texto."
+    ? "El receptor necesita Tareas para Android instalada. El enlace apuntes:// se abre con la app; WhatsApp puede mostrarlo solo como texto."
     : location.protocol === "file:"
       ? "El enlace de un archivo local no puede abrirse en otro dispositivo. Comparte desde una dirección HTTPS."
       : "Solo se comparten los datos elegidos. No se comparte tu progreso, recordatorios ni notas personales.";
@@ -1487,7 +1487,7 @@ $("#export-backup").addEventListener("click", () => {
     return { ...copy, shareMode: "copy", shareRole: "admin" };
   });
   downloadFile(
-    `apuntes-${offset(0)}.json`,
+    `tareas-${offset(0)}.json`,
     JSON.stringify(
       {
         version: 1,
@@ -1508,7 +1508,7 @@ $("#export-backup").addEventListener("click", () => {
 $("#export-recovery").addEventListener("click", () => {
   try {
     downloadFile(
-      "apuntes-recuperacion.json",
+      "tareas-recuperacion.json",
       JSON.stringify(
         {
           current: localStorage.getItem(STORAGE),
@@ -1530,7 +1530,9 @@ $("#import-backup").addEventListener("change", async (e) => {
       throw Error("El respaldo supera el límite de 2 MB.");
     const data = JSON.parse(await file.text());
     if (!validBackup(data))
-      throw Error("El archivo no es un respaldo válido de Apuntes.");
+      throw Error(
+        "El archivo no es un respaldo válido de Tareas (antes Apuntes).",
+      );
     if (
       (tasks.length || courses.length) &&
       !confirm(

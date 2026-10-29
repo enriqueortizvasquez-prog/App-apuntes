@@ -1,4 +1,4 @@
-# Descargar e instalar Apuntes gratis
+# Descargar e instalar Tareas gratis
 
 ## Descargar un solo archivo
 
@@ -18,7 +18,7 @@ Abre la app una vez con conexión para que se descarguen los archivos. Después 
 
 ## APK para Android
 
-La versión 1.2.0-beta incluye un APK instalable sin depender de una página remota. Consulta `ANDROID.md` para descargar, instalar, guardar respaldos y revisar las limitaciones de su firma de prueba. El APK no es una aplicación para iPhone. Añade acceso Google en el navegador, pendiente de configurar el proveedor (`GOOGLE.md`); exporta respaldo antes de cambiar desde una beta anterior porque la firma puede ser distinta.
+La versión 1.3.0-beta incluye un APK instalable sin depender de una página remota. Consulta `ANDROID.md` para descargar, instalar, guardar respaldos y revisar las limitaciones de su firma de prueba. El APK no es una aplicación para iPhone. Añade acceso Google en el navegador, pendiente de configurar el proveedor (`GOOGLE.md`); exporta respaldo antes de cambiar desde una beta anterior porque la firma puede ser distinta.
 
 ## Publicación
 

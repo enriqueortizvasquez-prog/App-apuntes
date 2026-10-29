@@ -71,15 +71,15 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
         run: |
-          if gh release view v1.2.0-beta --json assets --jq '[.assets[].name] | index("apuntes-android-v1.2.0-beta.apk") != null' 2>/dev/null | grep -q true; then
+          if gh release view v1.3.0-beta --json assets --jq '[.assets[].name] | index("tareas-android-v1.3.0-beta.apk") != null' 2>/dev/null | grep -q true; then
             echo 'La descarga ya existe: se conserva su firma. Una nueva versión requiere una nueva etiqueta.'
             exit 0
           fi
-          cp android/app/build/outputs/apk/debug/app-debug.apk apuntes-android-v1.2.0-beta.apk
-          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs apuntes-android-v1.2.0-beta.apk > verificacion-firma.txt
-          sha256sum apuntes-android-v1.2.0-beta.apk > SHA256SUMS.txt
-          if ! gh release view v1.2.0-beta; then
-            gh release create v1.2.0-beta --target "$GITHUB_SHA" --prerelease --title 'Apuntes Android 1.2 · Beta instalable' --notes-file docs/ANDROID.md
+          cp android/app/build/outputs/apk/debug/app-debug.apk tareas-android-v1.3.0-beta.apk
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs tareas-android-v1.3.0-beta.apk > verificacion-firma.txt
+          sha256sum tareas-android-v1.3.0-beta.apk > SHA256SUMS.txt
+          if ! gh release view v1.3.0-beta; then
+            gh release create v1.3.0-beta --target "$GITHUB_SHA" --prerelease --title 'Tareas Android 1.3 · Beta instalable' --notes-file docs/ANDROID.md
           fi
-          gh release upload v1.2.0-beta SHA256SUMS.txt verificacion-firma.txt dist/descargas/apuntes-portable.html dist/descargas/apuntes-v1.2.0-beta.zip --clobber
-          gh release upload v1.2.0-beta apuntes-android-v1.2.0-beta.apk
+          gh release upload v1.3.0-beta SHA256SUMS.txt verificacion-firma.txt dist/descargas/tareas-portable.html dist/descargas/tareas-v1.3.0-beta.zip --clobber
+          gh release upload v1.3.0-beta tareas-android-v1.3.0-beta.apk
