@@ -35,9 +35,9 @@ export class Cloud {
         const p = JSON.parse(
           atob(this.key.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")),
         );
-        if (p.role !== "anon") return false;
+        return p.role === "anon";
       }
-      return true;
+      return this.key.startsWith("sb_publishable_");
     } catch {
       return false;
     }

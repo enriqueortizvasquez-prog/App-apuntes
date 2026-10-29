@@ -58,3 +58,7 @@ test("errores remotos se propagan sin fingir una escritura local", async (t) => 
   };
   await assert.rejects(c.deleteTask("x"), /No tienes permiso/);
 });
+
+test("solo se aceptan claves anon/publishable, no contraseñas o tokens ajenos",()=>{
+ for(const key of ["contraseña_por_error","ghp_no_es_clave_publica","service_role"]){assert.equal(new Cloud({...cfg,supabaseKey:key}).configured,false);}
+});
