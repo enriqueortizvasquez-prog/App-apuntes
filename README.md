@@ -2,7 +2,7 @@
 
 Una app gratuita para organizar los deberes de la universidad. Diseño **Grafito**, sin anuncios y sin suscripción propia. Instalable como PWA en Android, iPhone/iPad y escritorio desde un sitio HTTPS. También se entrega un **HTML independiente** que se puede descargar y abrir sin instalar nada.
 
-> Este repositorio se mantiene **privado por decisión de su propietario**. Las releases y los artefactos de GitHub solo están disponibles para usuarios con acceso. No se ha publicado el código ni un sitio público. Una URL de vista previa temporal no sustituye un alojamiento permanente.
+> **El propietario autorizó hacer público el repositorio.** Se confirmó el cambio el 29 de octubre de 2026. Las descargas de GitHub son públicas. La publicación de Pages aún requiere habilitarla en los ajustes del repositorio: la conexión actual no tiene ese permiso.
 
 ## Funciones
 
@@ -20,14 +20,18 @@ Una app gratuita para organizar los deberes de la universidad. Diseño **Grafito
 
 No se han añadido subtareas, comentarios ni recurrencias: quedaron fuera del alcance acordado.
 
+## Android: APK instalable
+
+La versión **1.1.0-beta** añade un APK con la app incluida, almacenamiento local, respaldos nativos y enlaces que abre Android. La compilación se publica en [Releases](https://github.com/enriqueortizvasquez-prog/App-apuntes/releases/tag/v1.1.0-beta) solo tras superar las pruebas instrumentadas. Consulta [instalación, firma beta y límites](docs/ANDROID.md). **No se presenta como colaboración activa:** primero hay que conectar el servicio real.
+
 ## Usar o descargar gratis
 
-1. Descarga `apuntes-portable.html` desde la release (con acceso a este repositorio) o desde el archivo entregado en la conversación.
+1. Descarga `apuntes-portable.html` desde la release  o desde el archivo entregado en la conversación.
 2. Ábrelo en un navegador moderno: todos los datos locales se quedan en ese navegador. El archivo portable no se instala como PWA y sus enlaces `file://` no son accesibles por otras personas.
 3. Para instalar como app, usa la publicación HTTPS de `dist/`. Ver [instalación](docs/INSTALAR.md).
 4. Para preparar la colaboración real, consulta [configuración](docs/COLABORACION.md) y [privacidad](PRIVACY.md).
 
-**No es un APK ni una aplicación de App Store.** Es una web instalable y un HTML descargable. No se cobran pagos por la app; el proveedor de alojamiento/datos puede tener cuotas propias.
+Además del HTML y la PWA hay un **APK Android beta separado**. No es una aplicación de App Store ni una publicación en Google Play. No se cobran pagos por la app; el proveedor de alojamiento/datos puede tener cuotas propias.
 
 ## Desarrollo y pruebas
 
@@ -45,7 +49,7 @@ npm run dev       # 0.0.0.0:3000
 
 - `dist/`: sitio estático listo para HTTPS, incluyendo rutas relativas compatibles con `/App-apuntes/`.
 - `dist/descargas/apuntes-portable.html`: una sola página con JS/CSS incrustados.
-- `dist/descargas/apuntes-v1.0.0.zip`: sitio, HTML portable, instrucciones y SQL opcional.
+- `dist/descargas/apuntes-v1.1.0-beta.zip`: sitio, HTML portable, instrucciones y SQL opcional.
 
 Para servir el resultado de producción: `SERVE_DIR=dist npm run dev`. No publiques `node_modules` ni archivos de pruebas/credenciales.
 
@@ -53,7 +57,9 @@ Los ejemplos no se cargan automáticamente en una app nueva. Están en Ajustes y
 
 ## GitHub
 
-- `Pruebas y descarga` ejecuta pruebas y genera un artefacto descargable para personas con acceso al repositorio.
+El APK se construye en `.github/workflows/android.yml`. La app Android empaqueta los archivos locales; no depende de Pages para arrancar. Los valores públicos de colaboración también pueden guardarse desde la app sin reconstruirla.
+
+- `Pruebas y descarga` ejecuta pruebas y genera un artefacto descargable público.
 - `Publicar sitio (opcional)` es **manual**; no modifica la privacidad ni activa Pages automáticamente. GitHub Pages desde un repositorio privado puede requerir un plan compatible. Alternativamente, publica `dist/` en un alojamiento estático HTTPS de tu elección sin hacer público el repositorio. Antes de publicar, revisa la visibilidad del sitio: un repositorio privado no implica que el sitio sea privado.
 - Configura los valores públicos de colaboración en `config.js`. **Nunca añadas `service_role`, claves secretas, contraseñas ni tokens de GitHub.**
 

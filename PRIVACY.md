@@ -22,3 +22,7 @@ Las notificaciones se piden solo al pulsar el botón correspondiente. No se soli
 ## Borrar o exportar
 
 Exporta desde Ajustes. Puedes eliminar deberes/cursos mediante la interfaz. Para borrar todos los datos locales, usa los ajustes de almacenamiento del navegador después de respaldar. Los datos compartidos se gestionan con sus permisos; cerrar sesión elimina su caché local, no borra el contenido del servidor ni los datos de otros miembros. Para eliminación completa de una cuenta y sus datos remotos, contacta al propietario del servicio; no hay pantalla de borrado de cuenta en esta versión.
+
+## APK Android
+
+La app se empaqueta con los mismos archivos gráficos y no carga una web remota al iniciar. La caché/almacenamiento del APK está separada de Chrome. El APK no activa copias automáticas de Android; tú eliges dónde exportar tu JSON con el selector del sistema. Importar solo permite leer el archivo que selecciones. No pide acceso general al almacenamiento, contactos, ubicación, cámara ni micrófono. Las referencias externas se abren fuera de la vista local con acceso al guardado nativo. La configuración pública del servicio se guarda localmente en este dispositivo y no se incluye en los respaldos.

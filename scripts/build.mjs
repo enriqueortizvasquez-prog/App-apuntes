@@ -10,6 +10,7 @@ const files = [
   "src/domain.js",
   "src/cloud.js",
   "src/install.js",
+  "src/native.js",
   "icons/icon-192.png",
   "icons/icon-512.png",
   "icons/maskable-512.png",
@@ -19,6 +20,7 @@ const files = [
   "docs/INSTALAR.md",
   "docs/COLABORACION.md",
   "docs/PRUEBAS.md",
+  "docs/ANDROID.md",
   "supabase/schema.sql",
 ];
 await rm("dist", { recursive: true, force: true });
@@ -42,7 +44,13 @@ html = html.replace(
   /<script src="config.js"><\/script>/,
   "<script>" + (await readFile("config.js", "utf8")) + "</script>",
 );
-const modules = ["src/domain.js", "src/cloud.js", "src/install.js", "app.js"];
+const modules = [
+  "src/domain.js",
+  "src/cloud.js",
+  "src/native.js",
+  "src/install.js",
+  "app.js",
+];
 let code = "";
 for (const file of modules) {
   let text = await readFile(file, "utf8");
@@ -76,15 +84,17 @@ for (const file of [
   "tests/security.test.mjs",
   "tests/browser.mjs",
   "tests/cloud-browser.mjs",
+  "tests/native.test.mjs",
+  "tests/native-browser.mjs",
 ]) {
   archive["Apuntes/" + file] = new Uint8Array(await readFile(file));
 }
 archive["Apuntes/LEEME.txt"] = strToU8(
-  "APUNTES 1.0.0 — GRATIS\n\nSin instalar: abre descargas/apuntes-portable.html.\nPWA: publica los archivos del sitio en un alojamiento HTTPS.\nDesarrollo: instala Node.js 22 y ejecuta npm ci, npm test, npm run build y npm run dev.\nGuarda tus datos: Ajustes y respaldo > Descargar respaldo JSON.\nLa colaboración está desactivada hasta configurar el servicio de datos; consulta docs/COLABORACION.md.\nEl repositorio sigue siendo privado.\n",
+  "APUNTES 1.1.0-beta — GRATIS\n\nSin instalar: abre descargas/apuntes-portable.html.\nPWA: publica los archivos del sitio en un alojamiento HTTPS.\nDesarrollo: instala Node.js 22 y ejecuta npm ci, npm test, npm run build y npm run dev.\nGuarda tus datos: Ajustes y respaldo > Descargar respaldo JSON.\nLa colaboración está desactivada hasta configurar el servicio de datos; consulta docs/COLABORACION.md.\nEl repositorio es público por autorización del propietario.\n",
 );
 archive["Apuntes/descargas/apuntes-portable.html"] = strToU8(html);
 await writeFile(
-  "dist/descargas/apuntes-v1.0.0.zip",
+  "dist/descargas/apuntes-v1.1.0-beta.zip",
   zipSync(archive, { level: 9 }),
 );
 console.log("Build listo: dist/ · HTML independiente · ZIP descargable");

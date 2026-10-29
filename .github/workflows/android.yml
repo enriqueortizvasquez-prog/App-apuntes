@@ -1,0 +1,70 @@
+name: APK Android y pruebas en celular virtual
+on:
+  push:
+    branches: [arena/35b68c60-app-apuntes]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: android-actions/setup-android@v3
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: 8.11.1
+      - run: npm ci
+      - run: npm test
+      - run: npm run build && npm run android:assets
+      - run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+      - run: gradle -p android :app:assembleDebug :app:assembleDebugAndroidTest --stacktrace
+      - name: Habilitar aceleración del emulador
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Probar APK en Android 35, sin datos móviles ni wifi
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          arch: x86_64
+          target: google_apis
+          disable-animations: true
+          script: |
+            adb shell svc wifi disable
+            adb shell svc data disable
+            gradle -p android :app:connectedDebugAndroidTest --stacktrace
+            adb exec-out run-as pe.apuntes.app cat files/android-prueba.png > android-prueba.png
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: android-pruebas
+          path: |
+            android/app/build/reports/androidTests/
+            android/app/build/outputs/androidTest-results/
+            android-prueba.png
+      - name: Publicar APK beta instalable
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          cp android/app/build/outputs/apk/debug/app-debug.apk apuntes-android-v1.1.0-beta.apk
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs apuntes-android-v1.1.0-beta.apk > verificacion-firma.txt
+          sha256sum apuntes-android-v1.1.0-beta.apk > SHA256SUMS.txt
+          if ! gh release view v1.1.0-beta; then
+            gh release create v1.1.0-beta --target "$GITHUB_SHA" --prerelease --title 'Apuntes Android 1.1 · Beta instalable' --notes-file docs/ANDROID.md
+          fi
+          gh release upload v1.1.0-beta apuntes-android-v1.1.0-beta.apk SHA256SUMS.txt verificacion-firma.txt dist/descargas/apuntes-portable.html dist/descargas/apuntes-v1.1.0-beta.zip --clobber

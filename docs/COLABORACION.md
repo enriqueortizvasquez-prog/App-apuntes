@@ -5,7 +5,7 @@ La descarga funciona sin este paso. La app no crea una base de datos ni envía d
 1. El propietario crea un proyecto Supabase y revisa sus cuotas/costos. La app no cobra una suscripción propia.
 2. En el editor SQL de un proyecto **vacío**, ejecuta `supabase/schema.sql` una vez. Es una transacción: si falla, se revierte. Si ya instalaste otra versión del esquema, no lo ejecutes encima sin una migración revisada.
 3. Activa el acceso por correo/contraseña en Auth. Configura el sitio/URLs permitidas de confirmación y recuperación con tu dirección HTTPS definitiva. Comprueba la entrega de correos y sus límites.
-4. En `config.js`, rellena `supabaseUrl` (HTTPS) y `supabaseKey` (clave **publishable** o JWT de rol **anon**). Son valores públicos. **Nunca uses service_role ni sb_secret_**; el cliente rechaza esas claves. No incluyas contraseñas de usuarios ni de base de datos en Git.
+4. Desde Ajustes → Cuenta y colaboración → Configurar servicio, puedes guardar los valores públicos en cada dispositivo sin reconstruir el APK. Para incluir una configuración común en las descargas, en `config.js` rellena `supabaseUrl` (HTTPS) y `supabaseKey` (clave **publishable** o JWT de rol **anon**). Son valores públicos. **Nunca uses service_role ni sb_secret_**; el cliente rechaza esas claves. No incluyas contraseñas de usuarios ni de base de datos en Git.
 5. Ejecuta pruebas y build; vuelve a publicar `dist/`. El HTML portable también contendrá la configuración pública. Mantén RLS y los permisos del SQL habilitados.
 6. Prueba con **dos cuentas distintas** en navegadores/perfiles distintos antes de ofrecerlo a compañeros.
 

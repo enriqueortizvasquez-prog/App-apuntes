@@ -1,8 +1,20 @@
 /** Optional real collaboration through Supabase Auth/PostgREST. No SDK or third-party scripts. */
 export class Cloud {
-  constructor(config = globalThis.APUNTES_CONFIG || {}) {
-    this.url = (config.supabaseUrl || "").replace(/\/$/, "");
-    this.key = config.supabaseKey || "";
+  constructor(config) {
+    if (config === undefined) {
+      config = globalThis.APUNTES_CONFIG || {};
+      if (!config.supabaseUrl) {
+        try {
+          config =
+            JSON.parse(localStorage.getItem("apuntes-cloud-config")) || config;
+        } catch {}
+      }
+    }
+    this.url = (
+      typeof config?.supabaseUrl === "string" ? config.supabaseUrl : ""
+    ).replace(/\/$/, "");
+    this.key =
+      typeof config?.supabaseKey === "string" ? config.supabaseKey : "";
     this.session = null;
     try {
       this.session = JSON.parse(sessionStorage.getItem("apuntes-session"));

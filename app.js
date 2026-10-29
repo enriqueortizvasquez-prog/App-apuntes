@@ -13,6 +13,7 @@ import {
 } from "./src/domain.js";
 import { Cloud } from "./src/cloud.js";
 import { setupInstall } from "./src/install.js";
+import { nativeAndroid, shareBase, setupNative } from "./src/native.js";
 ("use strict");
 const $ = (s) => document.querySelector(s),
   STORAGE = "apuntes-v1",
@@ -22,7 +23,7 @@ const $ = (s) => document.querySelector(s),
     { id: "history", name: "Historia", color: "#e3bd99" },
     { id: "bio", name: "Biología", color: "#dcaebd" },
   ];
-const cloud = new Cloud();
+let cloud = new Cloud();
 let cloudSpaces = [],
   cloudSyncing = false,
   lastCloudUser = cloud.session?.user?.id || null;
@@ -911,10 +912,7 @@ function updateShare() {
       link: include ? t.link : "",
     })),
   };
-  const link =
-    location.href.split("#")[0] +
-    "#apuntes=" +
-    encodeInvitation(currentPayload);
+  const link = shareBase() + "#apuntes=" + encodeInvitation(currentPayload);
   if (link.length > 16000) {
     setShareLink("", "");
     $("#share-error").textContent =
@@ -922,8 +920,9 @@ function updateShare() {
     return;
   }
   setShareLink(link, "Te comparto una copia: " + currentPayload.title);
-  $("#share-error").textContent =
-    location.protocol === "file:"
+  $("#share-error").textContent = nativeAndroid()
+    ? "El receptor necesita Apuntes para Android instalada. El enlace apuntes:// se abre con la app; WhatsApp puede mostrarlo solo como texto."
+    : location.protocol === "file:"
       ? "El enlace de un archivo local no puede abrirse en otro dispositivo. Comparte desde una dirección HTTPS."
       : "Solo se comparten los datos elegidos. No se comparte tu progreso, recordatorios ni notas personales.";
 }
@@ -1437,6 +1436,7 @@ $("#top-date").textContent = new Date().toLocaleDateString("es-PE", {
 });
 render();
 setupInstall(notify);
+setupNative(notify);
 loadInvitation();
 checkReminders();
 setInterval(() => {
@@ -1453,6 +1453,10 @@ document.addEventListener("visibilitychange", () => {
 
 // Local backups, installation and optional authenticated collaboration.
 function downloadFile(name, text, type = "application/json") {
+  if (nativeAndroid()) {
+    globalThis.ApuntesAndroid.saveFile(name, text, type);
+    return;
+  }
   const url = URL.createObjectURL(new Blob([text], { type })),
     a = el("a");
   a.href = url;
@@ -1489,7 +1493,9 @@ $("#export-backup").addEventListener("click", () => {
     ),
   );
   notify(
-    "Respaldo descargado. No contiene contraseñas ni claves. Los compartidos se respaldan como copias locales.",
+    nativeAndroid()
+      ? "Respaldo preparado. Elige dónde guardarlo en tu celular."
+      : "Respaldo descargado. No contiene contraseñas ni claves. Los compartidos se respaldan como copias locales.",
   );
 });
 $("#export-recovery").addEventListener("click", () => {
@@ -1742,6 +1748,9 @@ async function syncCloud() {
   }
 }
 function renderCloudAccount() {
+  $("#cloud-backend").textContent = cloud.configured
+    ? "Servicio configurado: " + cloud.url
+    : "Ningún servicio conectado.";
   $("#cloud-status").textContent = !cloud.configured
     ? "Esta publicación no tiene configurado el servicio de colaboración. Los deberes, cursos, calendario, copias y respaldos funcionan sin cuenta. Para activar la sincronización, el propietario debe configurar Supabase siguiendo la guía."
     : cloud.session
@@ -1925,7 +1934,7 @@ $("#create-shared-link").addEventListener("click", async () => {
       ));
     await syncCloud();
     const info = await cloud.invite(space, $("#share-role").value);
-    const link = location.href.split("#")[0] + "#join=" + info.token;
+    const link = shareBase() + "#join=" + info.token;
     setShareLink(link, "Te invito a " + currentShareTitle());
     $("#share-error").textContent =
       "Invitación válida hasta " +
@@ -2037,3 +2046,48 @@ if (location.protocol === "file:") {
     }),
   );
 }
+
+$("#configure-cloud").addEventListener("click", () => {
+  $("#config-url").value = cloud.url;
+  $("#config-key").value = cloud.key;
+  $("#config-message").textContent = "";
+  $("#cloud-config-dialog").showModal();
+});
+$("#cloud-config-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const config = {
+    supabaseUrl: $("#config-url").value.trim().replace(/\/$/, ""),
+    supabaseKey: $("#config-key").value.trim(),
+  };
+  const candidate = new Cloud(config);
+  if (!candidate.configured) {
+    $("#config-message").textContent =
+      "Usa la URL HTTPS del proyecto y una clave pública publishable o anon. Nunca service_role ni sb_secret_.";
+    return;
+  }
+  if (
+    cloud.session &&
+    !confirm(
+      "Cambiar de servicio cerrará la sesión y quitará la caché compartida de este dispositivo. Exporta un respaldo si necesitas sus notas personales y recordatorios. ¿Continuar?",
+    )
+  )
+    return;
+  try {
+    localStorage.setItem("apuntes-cloud-config", JSON.stringify(config));
+    try {
+      await cloud.signOut();
+    } catch {}
+    cloud = new Cloud(config);
+    cloud.store(null);
+    lastCloudUser = null;
+    purgeCloudData();
+    renderCloudAccount();
+    $("#cloud-config-dialog").close();
+    notify(
+      "Configuración guardada. El proyecto debe tener instalado el esquema SQL. Inicia sesión para comprobar la conexión.",
+    );
+  } catch {
+    $("#config-message").textContent =
+      "No se pudo guardar la configuración. Revisa el almacenamiento del dispositivo.";
+  }
+});

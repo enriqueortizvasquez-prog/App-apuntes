@@ -1,7 +1,7 @@
 name: Pruebas y descarga
 on:
   push:
-    branches: [main, arena/1a19fbb0-app-apuntes]
+    branches: [main, arena/35b68c60-app-apuntes]
   pull_request:
   workflow_dispatch:
 permissions:

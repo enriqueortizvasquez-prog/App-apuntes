@@ -564,7 +564,10 @@
           Descargar datos sin procesar</button
         ><a class="secondary" href="./descargas/apuntes-portable.html" download
           >Descargar HTML sin instalación</a
-        ><a class="secondary" href="./descargas/apuntes-v1.0.0.zip" download
+        ><a
+          class="secondary"
+          href="./descargas/apuntes-v1.1.0-beta.zip"
+          download
           >Descargar paquete ZIP</a
         ><button class="secondary" id="open-cloud">Cuenta y colaboración</button
         ><button class="text" id="load-examples">
@@ -577,7 +580,7 @@
         esta app.
       </p>
       <p class="hint">
-        Versión 1.0.0 ·
+        Versión 1.1.0-beta ·
         <a href="./PRIVACY.md" target="_blank" rel="noopener">Privacidad</a> ·
         <a href="./docs/INSTALAR.md" target="_blank" rel="noopener"
           >Cómo instalar</a
@@ -622,6 +625,10 @@
         </button>
       </div>
       <p class="notice" id="cloud-status"></p>
+      <p class="hint" id="cloud-backend"></p>
+      <button class="secondary" id="configure-cloud">
+        Configurar servicio de colaboración
+      </button>
       <form id="auth-form">
         <label class="field"
           >Correo electrónico<input
@@ -666,6 +673,51 @@
           >la guía de configuración</a
         >. No introduzcas claves secretas en esta app.
       </p>
+    </dialog>
+    <dialog id="cloud-config-dialog" class="wide">
+      <form id="cloud-config-form">
+        <div class="modal-heading">
+          <h2>Conectar colaboración</h2>
+          <button
+            class="icon"
+            type="button"
+            data-close="cloud-config-dialog"
+            aria-label="Cerrar"
+          >
+            ×
+          </button>
+        </div>
+        <p class="notice">
+          No se crea un servidor al pulsar Guardar. Primero necesitas un
+          proyecto Supabase y ejecutar el esquema de la guía. Después introduce
+          sus valores públicos.
+        </p>
+        <label class="field"
+          >URL HTTPS del proyecto<input
+            id="config-url"
+            type="url"
+            placeholder="https://tu-proyecto.supabase.co"
+            required
+            maxlength="500"
+        /></label>
+        <label class="field"
+          >Clave pública publishable o anon<textarea
+            id="config-key"
+            required
+            rows="3"
+            maxlength="3000"
+            autocomplete="off"
+            spellcheck="false"
+          ></textarea>
+        </label>
+        <p class="hint">
+          Estos valores se guardan solo en este dispositivo. Todas las personas
+          de un grupo deben conectarse al mismo proyecto. Nunca introduzcas una
+          contraseña, service_role o sb_secret_.
+        </p>
+        <p id="config-message" class="hint" role="status"></p>
+        <button class="primary" type="submit">Guardar configuración</button>
+      </form>
     </dialog>
     <dialog id="members-dialog" class="wide">
       <div class="modal-heading">

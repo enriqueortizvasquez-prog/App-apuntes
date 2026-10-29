@@ -16,11 +16,13 @@ El botón «Instalar gratis» utiliza el diálogo del navegador si está disponi
 
 Abre la app una vez con conexión para que se descarguen los archivos. Después podrás organizar tus datos locales sin internet. Los compartidos necesitan conexión para actualizarse. La instalación desde la vista previa de Arena sirve para probar; usa un alojamiento permanente para tu uso diario.
 
-## Alojamiento sin cambiar la privacidad del repositorio
+## APK para Android
 
-El propietario ha decidido mantenerlo privado. Las descargas de las releases requieren acceso a GitHub. Puedes compartir el HTML/ZIP personalmente con quien quieras que use la app, o publicar únicamente el contenido de `dist/` en un alojamiento estático HTTPS. No es necesario publicar el código fuente en GitHub. Los proveedores establecen sus propias cuotas.
+La versión 1.1.0-beta incluye un APK instalable sin depender de una página remota. Consulta `ANDROID.md` para descargar, instalar, guardar respaldos y revisar las limitaciones de su firma de prueba. El APK no es una aplicación para iPhone.
 
-El workflow de Pages es opcional y manual. No garantiza que tu plan permita publicar desde un repositorio privado. Este proyecto no cambia esa configuración ni la visibilidad del repositorio por su cuenta.
+## Publicación
+
+El propietario autorizó publicar el repositorio y GitHub confirma que ya es público. Las releases son públicas. Pages aún no está habilitado: para publicar el sitio, el propietario debe elegir Settings → Pages → Build and deployment → Source: GitHub Actions. La conexión del agente no tiene permiso para cambiar esa configuración. El APK no requiere Pages.
 
 ## Copias de seguridad
 
