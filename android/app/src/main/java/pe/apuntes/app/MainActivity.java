@@ -27,6 +27,7 @@ public class MainActivity extends Activity {
     private WebView web;
     private ValueCallback<Uri[]> fileCallback;
     private byte[] pendingFile;
+    private String consumedLaunch;
     public WebView getWebView() { return web; }
 
     @Override public void onCreate(Bundle state) {
@@ -85,21 +86,42 @@ public class MainActivity extends Activity {
             }
         });
         web.addJavascriptInterface(new FileBridge(),"ApuntesAndroid");
-        String fragment=state==null?invitationFragment(getIntent().getData()):null;
+        // Distinguish a genuinely new callback after process death from rotating
+        // an already consumed launch URI. Store only its hash, never the code.
+        consumedLaunch=launchFingerprint(getIntent().getData());
+        boolean consumed=state!=null && consumedLaunch.equals(state.getString("apuntes-consumed-launch"));
+        String fragment=consumed?null:navigationFragment(getIntent().getData());
         web.loadUrl(START+(fragment==null?"":"#"+fragment));
+    }
+    private static String launchFingerprint(Uri uri) {
+        if(uri==null)return "none";
+        try {
+            byte[] hash=java.security.MessageDigest.getInstance("SHA-256").digest(uri.toString().getBytes(StandardCharsets.UTF_8));
+            return android.util.Base64.encodeToString(hash,android.util.Base64.NO_WRAP);
+        } catch(java.security.NoSuchAlgorithmException e) { throw new IllegalStateException(e); }
+    }
+    @Override protected void onSaveInstanceState(Bundle state) {
+        state.putString("apuntes-consumed-launch",consumedLaunch);
+        super.onSaveInstanceState(state);
     }
     private boolean isLocal(Uri uri) {
         return "https".equals(uri.getScheme()) && "appassets.androidplatform.net".equals(uri.getHost())
             && uri.getPort()==-1 && uri.getPath()!=null && uri.getPath().startsWith("/assets/site/");
     }
-    private String invitationFragment(Uri uri) {
-        if(uri==null || !"apuntes".equals(uri.getScheme()) || !"open".equals(uri.getHost()))return null;
+    // OAuth codes are transported to bundled JS only. PKCE validates the code
+    // against a locally initiated flow; URL-supplied access tokens are never used.
+    static String navigationFragment(Uri uri) {
+        if(uri==null || !"apuntes".equals(uri.getScheme()) || !"open".equals(uri.getEncodedAuthority())
+            || !(uri.getPath()==null || uri.getPath().isEmpty() || "/".equals(uri.getPath())))return null;
+        if(uri.getQueryParameter("error")!=null)return "oauth=error=cancelled";
+        String code=uri.getQueryParameter("code");
+        if(code!=null)return code.matches("[A-Za-z0-9_-]{1,2048}")?"oauth=code="+Uri.encode(code):null;
         String fragment=uri.getEncodedFragment();
         if(fragment==null || fragment.length()>30009 || !(fragment.startsWith("apuntes=") || fragment.startsWith("join=")))return null;
         return fragment;
     }
     private void openInvitation(Uri uri) {
-        String fragment=invitationFragment(uri);
+        String fragment=navigationFragment(uri);
         if(fragment!=null)web.loadUrl(START+"#"+fragment);
     }
     @Override protected void onNewIntent(Intent intent) { super.onNewIntent(intent);openInvitation(intent.getData()); }

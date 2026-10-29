@@ -1,4 +1,4 @@
-const CACHE = "apuntes-v1.1.0-beta";
+const CACHE = "apuntes-v1.2.0-beta";
 const ASSETS = [
   "./",
   "./index.html",
@@ -7,6 +7,7 @@ const ASSETS = [
   "./config.js",
   "./src/domain.js",
   "./src/cloud.js",
+  "./src/oauth.js",
   "./src/install.js",
   "./src/native.js",
   "./manifest.webmanifest",

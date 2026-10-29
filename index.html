@@ -566,7 +566,7 @@
           >Descargar HTML sin instalación</a
         ><a
           class="secondary"
-          href="./descargas/apuntes-v1.1.0-beta.zip"
+          href="./descargas/apuntes-v1.2.0-beta.zip"
           download
           >Descargar paquete ZIP</a
         ><button class="secondary" id="open-cloud">Cuenta y colaboración</button
@@ -580,7 +580,7 @@
         esta app.
       </p>
       <p class="hint">
-        Versión 1.1.0-beta ·
+        Versión 1.2.0-beta ·
         <a href="./PRIVACY.md" target="_blank" rel="noopener">Privacidad</a> ·
         <a href="./docs/INSTALAR.md" target="_blank" rel="noopener"
           >Cómo instalar</a
@@ -629,30 +629,47 @@
       <button class="secondary" id="configure-cloud">
         Configurar servicio de colaboración
       </button>
-      <form id="auth-form">
-        <label class="field"
-          >Correo electrónico<input
-            id="auth-email"
-            type="email"
-            autocomplete="email"
-            required
-            maxlength="254" /></label
-        ><label class="field"
-          >Contraseña<input
-            id="auth-password"
-            type="password"
-            autocomplete="current-password"
-            required
-            minlength="8"
-            maxlength="128"
-        /></label>
-        <div class="share-actions">
-          <button class="primary" type="submit">Iniciar sesión</button
-          ><button class="secondary" id="sign-up" type="button">
-            Crear cuenta
-          </button>
-        </div>
-      </form>
+      <div id="cloud-login">
+        <button class="primary" id="sign-in-google" type="button">
+          Entrar con Google
+        </button>
+        <p class="hint">
+          Se abre el navegador para elegir tu cuenta y después vuelves a
+          Apuntes. Tu contraseña de Google no se introduce en esta app. Solo
+          solicitamos tu identidad básica, no acceso a Gmail, Drive ni Calendar.
+        </p>
+        <details id="email-access">
+          <summary>Otros métodos: correo y contraseña</summary>
+          <p class="hint">
+            Para crear cuentas por correo, el propietario debe configurar un
+            servicio SMTP. Google no necesita ese envío.
+          </p>
+          <form id="auth-form">
+            <label class="field"
+              >Correo electrónico<input
+                id="auth-email"
+                type="email"
+                autocomplete="email"
+                required
+                maxlength="254" /></label
+            ><label class="field"
+              >Contraseña<input
+                id="auth-password"
+                type="password"
+                autocomplete="current-password"
+                required
+                minlength="8"
+                maxlength="128"
+            /></label>
+            <div class="share-actions">
+              <button class="primary" type="submit">Iniciar sesión</button
+              ><button class="secondary" id="sign-up" type="button">
+                Crear cuenta
+              </button>
+            </div>
+          </form>
+        </details>
+      </div>
       <div id="cloud-account" hidden>
         <p class="hint" id="cloud-user"></p>
         <div class="share-actions">

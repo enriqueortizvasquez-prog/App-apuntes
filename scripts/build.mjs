@@ -9,6 +9,7 @@ const files = [
   "sw.js",
   "src/domain.js",
   "src/cloud.js",
+  "src/oauth.js",
   "src/install.js",
   "src/native.js",
   "icons/icon-192.png",
@@ -19,6 +20,7 @@ const files = [
   "PRIVACY.md",
   "docs/INSTALAR.md",
   "docs/COLABORACION.md",
+  "docs/GOOGLE.md",
   "docs/PRUEBAS.md",
   "docs/ANDROID.md",
   "supabase/schema.sql",
@@ -47,6 +49,7 @@ html = html.replace(
 const modules = [
   "src/domain.js",
   "src/cloud.js",
+  "src/oauth.js",
   "src/native.js",
   "src/install.js",
   "app.js",
@@ -81,6 +84,8 @@ for (const file of [
   "scripts/icons.mjs",
   "tests/domain.test.mjs",
   "tests/cloud.test.mjs",
+  "tests/oauth.test.mjs",
+  "tests/oauth-browser.mjs",
   "tests/security.test.mjs",
   "tests/browser.mjs",
   "tests/cloud-browser.mjs",
@@ -90,11 +95,11 @@ for (const file of [
   archive["Apuntes/" + file] = new Uint8Array(await readFile(file));
 }
 archive["Apuntes/LEEME.txt"] = strToU8(
-  "APUNTES 1.1.0-beta — GRATIS\n\nSin instalar: abre descargas/apuntes-portable.html.\nPWA: publica los archivos del sitio en un alojamiento HTTPS.\nDesarrollo: instala Node.js 22 y ejecuta npm ci, npm test, npm run build y npm run dev.\nGuarda tus datos: Ajustes y respaldo > Descargar respaldo JSON.\nLa colaboración está desactivada hasta configurar el servicio de datos; consulta docs/COLABORACION.md.\nEl repositorio es público por autorización del propietario.\n",
+  "APUNTES 1.2.0-beta — GRATIS\n\nSin instalar: abre descargas/apuntes-portable.html.\nPWA: publica los archivos del sitio en un alojamiento HTTPS.\nDesarrollo: instala Node.js 22 y ejecuta npm ci, npm test, npm run build y npm run dev.\nGuarda tus datos: Ajustes y respaldo > Descargar respaldo JSON.\nEl servicio público de colaboración está incluido. El acceso Google requiere activar el proveedor; consulta docs/GOOGLE.md.\nEl repositorio es público por autorización del propietario.\n",
 );
 archive["Apuntes/descargas/apuntes-portable.html"] = strToU8(html);
 await writeFile(
-  "dist/descargas/apuntes-v1.1.0-beta.zip",
+  "dist/descargas/apuntes-v1.2.0-beta.zip",
   zipSync(archive, { level: 9 }),
 );
 console.log("Build listo: dist/ · HTML independiente · ZIP descargable");

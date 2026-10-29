@@ -49,6 +49,49 @@ public class AppTest {
         android.view.MotionEvent up=android.view.MotionEvent.obtain(now,now+80,android.view.MotionEvent.ACTION_UP,x,y,0);
         InstrumentationRegistry.getInstrumentation().sendPointerSync(down);InstrumentationRegistry.getInstrumentation().sendPointerSync(up);down.recycle();up.recycle();
     }
+    @Test public void strictOAuthCallbackRouting() {
+        assertEquals("oauth=code=valid-code_123", MainActivity.navigationFragment(Uri.parse("apuntes://open?code=valid-code_123")));
+        assertEquals("oauth=error=cancelled", MainActivity.navigationFragment(Uri.parse("apuntes://open?error=access_denied&error_description=private")));
+        for(String url:new String[]{"https://open?code=foo", "apuntes://evil?code=foo", "apuntes://user@open?code=foo", "apuntes://open:99?code=foo", "apuntes://open/evil?code=foo", "apuntes://open?code=%3Cscript%3E", "apuntes://open#access_token=evil", "apuntes://open#oauth=code=evil"})
+            assertNull(url,MainActivity.navigationFragment(Uri.parse(url)));
+    }
+    @Test public void coldOAuthReturnIsScrubbedAndNotReplayedOnRecreate() throws Exception {
+        android.content.Context context=InstrumentationRegistry.getInstrumentation().getTargetContext();
+        Intent callback=new Intent(context,MainActivity.class).setAction(Intent.ACTION_VIEW).setData(Uri.parse("apuntes://open?code=cold-forged-code"));
+        try(ActivityScenario<MainActivity> scenario=ActivityScenario.launch(callback)) {
+            scenario.onActivity(a->activity=a);
+            waitFor("document.querySelector('#cloud-dialog')?.open && document.querySelector('#cloud-message').textContent.includes('no se inició aquí')");
+            assertEquals("true",js("location.hash==='' && !sessionStorage.getItem('apuntes-session')"));
+            scenario.recreate();scenario.onActivity(a->activity=a);
+            waitFor("!!document.querySelector('#cloud-dialog')");
+            assertEquals("false",js("document.querySelector('#cloud-dialog').open"));
+            assertEquals("true",js("location.hash===''"));
+        }
+    }
+    @Test public void googleUsesExternalBrowser() throws Exception {
+        Intents.init();
+        try(ActivityScenario<MainActivity> scenario=ActivityScenario.launch(MainActivity.class)) {
+            scenario.onActivity(a->activity=a);
+            waitFor("!!document.querySelector('#sign-in-google')");
+            intending(hasAction(Intent.ACTION_VIEW)).respondWith(new Instrumentation.ActivityResult(Activity.RESULT_CANCELED,null));
+            js("window.fetch=async()=>new Response(JSON.stringify({external:{google:true}}),{status:200,headers:{'Content-Type':'application/json'}});document.querySelector('#reset-demo').click();document.querySelector('#open-cloud').click();document.querySelector('#sign-in-google').click()");
+            waitFor("!!localStorage.getItem('apuntes-oauth-pending') && document.querySelector('#cloud-message').textContent.includes('Continúa en Google')");
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+            boolean found=false;
+            for(Intent intent:Intents.getIntents()) {
+                Uri u=intent.getData();
+                if(Intent.ACTION_VIEW.equals(intent.getAction()) && u!=null && "/auth/v1/authorize".equals(u.getPath())) {
+                    assertEquals("https",u.getScheme());assertEquals("google",u.getQueryParameter("provider"));
+                    assertEquals("apuntes://open",u.getQueryParameter("redirect_to"));
+                    assertEquals("s256",u.getQueryParameter("code_challenge_method"));
+                    assertNull(u.getQueryParameter("code_verifier"));found=true;
+                }
+            }
+            assertTrue("Google debe abrirse mediante ACTION_VIEW fuera del WebView",found);
+            assertEquals("true",js("location.hostname==='appassets.androidplatform.net'"));
+            js("localStorage.removeItem('apuntes-oauth-pending')");
+        } finally { Intents.release(); }
+    }
     @Test public void offlineAppCrudBackupPersistenceAndDeepLink() throws Exception {
         Intents.init();
         try(ActivityScenario<MainActivity> scenario=ActivityScenario.launch(MainActivity.class)){
@@ -92,6 +135,11 @@ public class AppTest {
             waitFor("!document.querySelector('#settings-dialog').open && document.querySelectorAll('#task-list .task').length===1");
             // Native wrapper should never navigate into a remotely hosted document.
             assertEquals("true",js("location.hostname==='appassets.androidplatform.net'"));
+            // A forged browser callback must be scrubbed and must NOT log in.
+            InstrumentationRegistry.getInstrumentation().runOnMainSync(()->activity.startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse("apuntes://open?code=not-started-here")).setPackage("pe.apuntes.app")));
+            waitFor("document.querySelector('#cloud-dialog')?.open && document.querySelector('#cloud-message').textContent.includes('no se inició aquí')");
+            assertEquals("true",js("location.hash==='' && !sessionStorage.getItem('apuntes-session') && location.hostname==='appassets.androidplatform.net'"));
+            js("document.querySelector('#cloud-dialog [data-close]').click()");
             // Exercise the actual exported Android deep link last: ActivityScenario does
             // not reliably track RESUMED after singleTask onNewIntent delivery.
             InstrumentationRegistry.getInstrumentation().runOnMainSync(()->activity.startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse(link)).setPackage("pe.apuntes.app")));

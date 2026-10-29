@@ -4,6 +4,10 @@ Una app gratuita para organizar los deberes de la universidad. Diseño **Grafito
 
 > **El propietario autorizó hacer público el repositorio.** Se confirmó el cambio el 29 de octubre de 2026. Las descargas de GitHub son públicas. La publicación de Pages aún requiere habilitarla en los ajustes del repositorio: la conexión actual no tiene ese permiso.
 
+## Acceso Google: versión 1.2
+
+El propietario aprobó **Entrar con Google** para evitar SMTP/Brevo. El nuevo APK incluye el proyecto público Supabase y un flujo seguro de navegador con PKCE S256. **El proveedor Google todavía requiere que el propietario cree/configure el cliente OAuth directamente en los paneles**: [pasos y estado](docs/GOOGLE.md). No se afirma que el consentimiento Google ni la colaboración entre dos personas estén probados todavía. Los datos locales no requieren cuenta. Antes de cambiar de APK beta, exporta respaldo: la firma de prueba puede impedir actualizar sobre la versión anterior.
+
 ## Funciones
 
 - Crear, editar y reprogramar deberes con fecha y hora, prioridad, notas y enlace de referencia.
@@ -16,17 +20,17 @@ Una app gratuita para organizar los deberes de la universidad. Diseño **Grafito
 - Copias de un deber o curso por enlace o WhatsApp, sin cuenta. No incluyen progreso, recordatorios ni notas personales; incluir notas compartidas y enlace es opcional.
 - Respaldo JSON exportable/importable y recuperación de datos en bruto.
 - Instalación PWA, caché sin conexión y HTML portable sin dependencias de red.
-- **Colaboración real opcional**: cuentas, cursos/deberes sincronizados, permisos verificados en servidor, invitaciones de 7 días revocables, gestión de miembros, progreso independiente y control de conflictos al editar. Requiere configurar un proyecto Supabase. **No está activa hasta que el propietario configure ese servicio.** No hay cuentas ficticias ni sincronización simulada.
+- **Colaboración real opcional**: cuentas, cursos/deberes sincronizados, permisos verificados en servidor, invitaciones de 7 días revocables, gestión de miembros, progreso independiente y control de conflictos al editar. El proyecto real ya está instalado. **Falta activar Google y probar dos cuentas reales antes de dar la colaboración por terminada.** No hay cuentas ficticias ni sincronización simulada.
 
 No se han añadido subtareas, comentarios ni recurrencias: quedaron fuera del alcance acordado.
 
 ## Conexión con el proyecto real
 
-El esquema y los permisos ya se instalaron y probaron en el proyecto Supabase del propietario. El APK existente puede conectarse desde sus ajustes sin reinstalarlo. **Falta resolver el registro por correo y probar dos cuentas reales**: consulta [estado de activación y configuración pública](docs/SUPABASE-ACTIVACION.md).
+El esquema y los permisos ya se instalaron y probaron en el proyecto Supabase del propietario. El APK 1.2 ya incluye la conexión pública; el 1.1 anterior permite configurarla manualmente pero no tiene el botón Google. **Falta configurar Google y probar dos cuentas reales**: consulta [estado de activación y configuración pública](docs/SUPABASE-ACTIVACION.md).
 
 ## Android: APK instalable
 
-La versión **1.1.0-beta** añade un APK con la app incluida, almacenamiento local, respaldos nativos y enlaces que abre Android. La compilación se publica en [Releases](https://github.com/enriqueortizvasquez-prog/App-apuntes/releases/tag/v1.1.0-beta) solo tras superar las pruebas instrumentadas. Consulta [instalación, firma beta y límites](docs/ANDROID.md). **No se presenta como colaboración activa:** primero hay que conectar el servicio real.
+La versión **1.2.0-beta** añade un APK con la app incluida, almacenamiento local, respaldos nativos y enlaces que abre Android. La compilación se publica en [Releases](https://github.com/enriqueortizvasquez-prog/App-apuntes/releases/tag/v1.2.0-beta) solo tras superar las pruebas instrumentadas. Consulta [instalación, firma beta y límites](docs/ANDROID.md). **No se presenta como colaboración ya probada:** falta activar el proveedor Google.
 
 ## Usar o descargar gratis
 
@@ -53,7 +57,7 @@ npm run dev       # 0.0.0.0:3000
 
 - `dist/`: sitio estático listo para HTTPS, incluyendo rutas relativas compatibles con `/App-apuntes/`.
 - `dist/descargas/apuntes-portable.html`: una sola página con JS/CSS incrustados.
-- `dist/descargas/apuntes-v1.1.0-beta.zip`: sitio, HTML portable, instrucciones y SQL opcional.
+- `dist/descargas/apuntes-v1.2.0-beta.zip`: sitio, HTML portable, instrucciones y SQL opcional.
 
 Para servir el resultado de producción: `SERVE_DIR=dist npm run dev`. No publiques `node_modules` ni archivos de pruebas/credenciales.
 

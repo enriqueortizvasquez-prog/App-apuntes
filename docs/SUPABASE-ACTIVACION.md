@@ -37,10 +37,10 @@ Es intencionadamente pública y no concede derechos administrativos. La protecci
 
 Todos los participantes necesitan conectar el mismo proyecto. La cuenta del panel de Supabase **no** equivale automáticamente a una cuenta de usuario dentro de Apuntes.
 
-## Decisión pendiente: registro de personas
+## Decisión vigente: acceso con Google
 
-El proyecto mantiene la confirmación del correo (`mailer_autoconfirm=false`) y no tiene SMTP propio. El correo integrado de Supabase solo entrega a direcciones preautorizadas del equipo y tiene límites de prueba: https://supabase.com/docs/guides/auth/auth-smtp.
+El propietario eligió mantener identidad verificada, y después aprobó **Entrar con Google** para no necesitar SMTP ni introducir una dirección postal en Brevo. No se debe continuar ese alta ni desactivar la confirmación del correo (`mailer_autoconfirm=false`). El método Google autentica la identidad a través de Google/Supabase; no necesita mandar un correo de confirmación desde Apuntes.
 
-Para admitir otros compañeros hay que configurar un proveedor SMTP o, con autorización explícita del propietario, permitir registro con correo/contraseña sin confirmación. Esta segunda opción no verifica que quien registra sea dueño de ese correo y no resuelve la recuperación por correo para usuarios externos. **No se ha aplicado esa reducción de verificación sin consultar al propietario.**
+La versión 1.2 incorpora el flujo PKCE y la configuración pública del proyecto. La configuración guardada manualmente por el usuario tiene prioridad. **El proveedor Google debe activarse todavía con un cliente OAuth propio**: seguir `docs/GOOGLE.md`. La integración actual no puede introducir esos campos del proveedor; el propietario debe hacerlo directamente en los paneles, sin compartir secretos en el chat.
 
-Después de resolver el registro, hay que probar dos cuentas reales en dispositivos/perfiles diferentes. No se presenta todavía la colaboración como completada de extremo a extremo.
+Pendiente: consentimiento e inicio de sesión Google reales y dos cuentas editando un espacio desde dispositivos/perfiles distintos. No se presenta todavía la colaboración como completada de extremo a extremo.

@@ -1,11 +1,11 @@
-# Apuntes Android 1.1 · Beta instalable
+# Apuntes Android 1.2 · Beta instalable
 
 Esta versión añade un **APK real para Android 8 o posterior**, con el diseño Grafito y la app incluida dentro del instalador. No es un enlace a una página remota: crear cursos/deberes, editar, completar, calendario y respaldos funcionan sin red desde el primer inicio.
 
 ## Descargar e instalar
 
-1. En el celular Android, abre https://github.com/enriqueortizvasquez-prog/App-apuntes/releases/tag/v1.1.0-beta
-2. En **Assets / Recursos**, descarga **apuntes-android-v1.1.0-beta.apk**.
+1. En el celular Android, abre https://github.com/enriqueortizvasquez-prog/App-apuntes/releases/tag/v1.2.0-beta
+2. En **Assets / Recursos**, descarga **apuntes-android-v1.2.0-beta.apk**.
 3. Abre el archivo descargado. Si Android lo solicita, permite temporalmente «Instalar apps desconocidas» **solo para el navegador o gestor de archivos que estás usando**. Después puedes volver a desactivar ese permiso.
 4. Confirma «Instalar» y abre **Apuntes** desde su icono.
 
@@ -22,16 +22,16 @@ No desactives Play Protect ni otras protecciones del dispositivo. Si Android mue
 
 El almacenamiento del APK es distinto del de Chrome: para trasladar tus deberes de la web al APK, exporta un JSON en Chrome e impórtalo en Apuntes. Desinstalar elimina los datos del APK: respalda antes.
 
-## Colaboración: requiere un servicio real
+## Colaboración y acceso Google
 
-**El repositorio público no crea un servidor y esta descarga no contiene uno configurado.** La sincronización no se da por activada ni probada con cuentas reales hasta completar estos pasos:
+El APK 1.2 incluye el proyecto público Supabase del propietario, cuya base/RLS ya se instaló y comprobó. **El acceso Google requiere todavía configurar y activar el proveedor**, siguiendo [GOOGLE.md](GOOGLE.md). No se presenta como un servicio de autenticación ya probado con cuentas reales.
 
-1. Crear un proyecto Supabase y ejecutar `supabase/schema.sql` en su editor SQL.
-2. En Apuntes: Ajustes y respaldo → Cuenta y colaboración → **Configurar servicio de colaboración**.
-3. Introducir la URL HTTPS y la clave **pública** publishable/anon. Nunca una contraseña, `service_role` o `sb_secret_`. Guardar y crear/iniciar una cuenta.
-4. Conectar los demás dispositivos al mismo proyecto; crear/aceptar una invitación y comprobar con dos cuentas distintas.
-
-La configuración se conserva solo en el dispositivo. Permite conectar el servicio después de instalar sin reconstruir el APK. También se puede incluir una configuración pública común en `config.js` antes de generar una versión. Consulta `COLABORACION.md` para los permisos y las pruebas remotas pendientes. Los planes gratuitos del proveedor tienen límites propios.
+- En Cuenta y colaboración: **Entrar con Google** abre el navegador externo y regresa a `apuntes://open`.
+- PKCE S256: solo se acepta un código asociado a un acceso iniciado en este dispositivo y servicio, durante 10 minutos. No se aceptan tokens en enlaces.
+- No hace falta configurar Brevo/SMTP para ese método. No se pide la contraseña Google dentro de la app ni permisos de Gmail/Drive/Calendar.
+- El cliente secreto OAuth se configura directamente en Supabase, no se publica. La URL y la clave publishable del APK son públicas y dependen de RLS para su seguridad.
+- Los demás participantes usan el mismo proyecto. Aún hay que probar consentimiento real, regreso al APK y colaboración entre dos cuentas.
+- La configuración pública manual sigue disponible para otro proyecto y tiene prioridad sobre el valor incluido.
 
 ## Firma y actualizaciones: beta de prueba
 
@@ -55,8 +55,8 @@ Usa el repositorio completo o el archivo **Source code (zip)** de GitHub para co
 
 Para repetirlo localmente hace falta JDK 17, Android SDK 35, Gradle 8.11.1 y un emulador/dispositivo. No se incluyen SDK, APK, claves privadas ni archivos generados en el código Git.
 
-Las pruebas del emulador no sustituyen probarlo en tu modelo de celular. Los avisos con la app cerrada no se ofrecen. No se han dado por probadas cuentas reales ni una base de datos remota.
+Las pruebas del emulador no sustituyen probarlo en tu modelo de celular. Los avisos con la app cerrada no se ofrecen. La base de datos remota/RLS sí se comprobó; el inicio Google y la colaboración con dos cuentas reales siguen pendientes.
 
 ## Verificación de esta descarga
 
-La ejecución [40937551900](https://github.com/enriqueortizvasquez-prog/App-apuntes/actions/runs/40937551900) finalizó con éxito, incluidas las pruebas Android y `apksigner`. El APK pesa aproximadamente 1,2 MB. La release es pública y no requiere una cuenta de GitHub para descargar.
+La publicación 1.2 solo se realiza después de las pruebas web, PKCE e instrumentación Android y de verificar la firma con `apksigner`. No reemplaza ni modifica la descarga 1.1 ya publicada. Consultar la ejecución de Actions asociada a la release para su resultado real.

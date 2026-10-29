@@ -157,6 +157,7 @@ export async function runCloudTests(browser, root, track) {
       () => !document.querySelector("#auth-form").hidden,
     );
     assert.equal((await stored()).tasks.length, 0);
+    await page.click("#email-access summary");
     await page.type("#auth-email", "b@example.com");
     await page.type("#auth-password", "testpassword");
     await page.click('#auth-form button[type="submit"]');

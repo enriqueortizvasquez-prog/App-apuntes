@@ -3,12 +3,10 @@ export class Cloud {
   constructor(config) {
     if (config === undefined) {
       config = globalThis.APUNTES_CONFIG || {};
-      if (!config.supabaseUrl) {
-        try {
-          config =
-            JSON.parse(localStorage.getItem("apuntes-cloud-config")) || config;
-        } catch {}
-      }
+      try {
+        config =
+          JSON.parse(localStorage.getItem("apuntes-cloud-config")) || config;
+      } catch {}
     }
     this.url = (
       typeof config?.supabaseUrl === "string" ? config.supabaseUrl : ""
@@ -43,10 +41,19 @@ export class Cloud {
     }
   }
   store(session) {
-    this.session = session;
+    // Keep only Supabase credentials and the identity used by this app.
+    // In particular never persist provider_token/provider_refresh_token from Google.
+    this.session = session
+      ? {
+          access_token: session.access_token,
+          refresh_token: session.refresh_token,
+          expires_at: session.expires_at,
+          user: { id: session.user.id, email: session.user.email },
+        }
+      : null;
     try {
       if (session)
-        sessionStorage.setItem("apuntes-session", JSON.stringify(session));
+        sessionStorage.setItem("apuntes-session", JSON.stringify(this.session));
       else sessionStorage.removeItem("apuntes-session");
     } catch {}
   }
@@ -64,6 +71,8 @@ export class Cloud {
       await this.refresh();
     const response = await fetch(this.url + path, {
       method,
+      cache: "no-store",
+      referrerPolicy: "no-referrer",
       headers: {
         apikey: this.key,
         "Content-Type": "application/json",

@@ -12,6 +12,13 @@ import {
   encodeInvitation,
 } from "./src/domain.js";
 import { Cloud } from "./src/cloud.js";
+import {
+  beginGoogleSignIn,
+  finishGoogleSignIn,
+  cancelGoogleSignIn,
+  oauthCallback,
+  oauthRedirect,
+} from "./src/oauth.js";
 import { setupInstall } from "./src/install.js";
 import { nativeAndroid, shareBase, setupNative } from "./src/native.js";
 ("use strict");
@@ -1755,7 +1762,8 @@ function renderCloudAccount() {
     ? "Esta publicación no tiene configurado el servicio de colaboración. Los deberes, cursos, calendario, copias y respaldos funcionan sin cuenta. Para activar la sincronización, el propietario debe configurar Supabase siguiendo la guía."
     : cloud.session
       ? "Tu cuenta está conectada. Las operaciones compartidas se verifican en el servidor; los datos locales no se suben automáticamente."
-      : "Inicia sesión o crea una cuenta para colaborar. La app local sigue funcionando sin cuenta.";
+      : "Entra con Google para colaborar. La app local sigue funcionando sin cuenta. No necesitas crear otra contraseña.";
+  $("#cloud-login").hidden = !cloud.configured || !!cloud.session;
   $("#auth-form").hidden = !cloud.configured || !!cloud.session;
   $("#cloud-account").hidden = !cloud.session;
   $("#cloud-user").textContent = cloud.session?.user?.email || "";
@@ -1873,6 +1881,76 @@ $("#sync-cloud").addEventListener("click", async () => {
     $("#cloud-message").textContent = e.message;
   }
 });
+async function connectedAccount() {
+  if (lastCloudUser && lastCloudUser !== cloud.session.user.id)
+    purgeCloudData();
+  lastCloudUser = cloud.session.user.id;
+  renderCloudAccount();
+  // A sync error must not look like a failed login or ask for the password again.
+  try {
+    await syncCloud();
+    $("#cloud-message").textContent = "Sesión iniciada.";
+  } catch (e) {
+    $("#cloud-message").textContent =
+      "Sesión iniciada. No se pudo sincronizar: " + e.message;
+  }
+  if (location.hash.startsWith("#join="))
+    await openCloudInvite(location.hash.slice(6));
+}
+let googleStarting = false;
+$("#sign-in-google").addEventListener("click", async () => {
+  if (googleStarting) return;
+  const current = cloud;
+  googleStarting = true;
+  $("#sign-in-google").disabled = true;
+  $("#cloud-message").textContent = "Preparando el acceso seguro…";
+  try {
+    const url = await beginGoogleSignIn(
+      current,
+      oauthRedirect(nativeAndroid(), location.href),
+      location.hash,
+    );
+    if (cloud !== current || cloud.session) {
+      cancelGoogleSignIn();
+      return;
+    }
+    $("#cloud-message").textContent =
+      "Continúa en Google en el navegador. Si cancelas, vuelve aquí y pulsa Entrar con Google otra vez.";
+    // Android intercepts this top-level HTTPS navigation and opens the system
+    // browser. Google's login must NEVER be displayed inside our WebView.
+    location.assign(url);
+  } catch (e) {
+    $("#cloud-message").textContent = e.message;
+  } finally {
+    googleStarting = false;
+    $("#sign-in-google").disabled = false;
+  }
+});
+async function resumeGoogleSignIn() {
+  let callback;
+  try {
+    callback = oauthCallback(location.href, nativeAndroid());
+  } catch (e) {
+    notify(e.message);
+    return;
+  }
+  if (!callback) return;
+  // Erase the authorization code from history even if exchange fails.
+  history.replaceState(null, "", callback.cleanUrl);
+  const current = cloud;
+  openCloud();
+  $("#cloud-message").textContent = "Comprobando el acceso con Google…";
+  try {
+    const { session, returnHash } = await finishGoogleSignIn(current, callback);
+    if (cloud !== current || current.session) return;
+    current.store(session);
+    if (returnHash)
+      history.replaceState(null, "", callback.cleanUrl + returnHash);
+    await connectedAccount();
+  } catch (e) {
+    $("#cloud-message").textContent = e.message;
+  }
+}
 async function authenticate(signUp) {
   if (!$("#auth-form").reportValidity()) return;
   const password = $("#auth-password").value,
@@ -1887,14 +1965,7 @@ async function authenticate(signUp) {
         return;
       }
     } else await cloud.signIn(email, password);
-    if (lastCloudUser && lastCloudUser !== cloud.session.user.id)
-      purgeCloudData();
-    lastCloudUser = cloud.session.user.id;
-    await syncCloud();
-    renderCloudAccount();
-    $("#cloud-message").textContent = "Sesión iniciada.";
-    if (location.hash.startsWith("#join="))
-      await openCloudInvite(location.hash.slice(6));
+    await connectedAccount();
   } catch (e) {
     $("#cloud-message").textContent = e.message;
   } finally {
@@ -1907,6 +1978,7 @@ $("#auth-form").addEventListener("submit", (e) => {
 });
 $("#sign-up").addEventListener("click", () => authenticate(true));
 $("#sign-out").addEventListener("click", async () => {
+  cancelGoogleSignIn();
   try {
     await cloud.signOut();
   } catch {}
@@ -2078,6 +2150,7 @@ $("#cloud-config-form").addEventListener("submit", async (e) => {
       await cloud.signOut();
     } catch {}
     cloud = new Cloud(config);
+    cancelGoogleSignIn();
     cloud.store(null);
     lastCloudUser = null;
     purgeCloudData();
@@ -2091,3 +2164,6 @@ $("#cloud-config-form").addEventListener("submit", async (e) => {
       "No se pudo guardar la configuración. Revisa el almacenamiento del dispositivo.";
   }
 });
+
+// All dialogs and invitation handlers are ready before handling a browser return.
+resumeGoogleSignIn();
