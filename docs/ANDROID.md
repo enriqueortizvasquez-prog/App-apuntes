@@ -60,3 +60,11 @@ Las pruebas del emulador no sustituyen probarlo en tu modelo de celular. Los avi
 ## Verificación de esta descarga
 
 La publicación 1.2 solo se realiza después de las pruebas web, PKCE e instrumentación Android y de verificar la firma con `apksigner`. No reemplaza ni modifica la descarga 1.1 ya publicada. Consultar la ejecución de Actions asociada a la release para su resultado real.
+
+### Resultado comprobado de 1.2
+
+La ejecución [40944333232](https://github.com/enriqueortizvasquez-prog/App-apuntes/actions/runs/40944333232) terminó correctamente el 29 de octubre de 2026 (4 min 32 s), revisión `55aa71757823fa294b4507173e44c9709c37c789`. Pasaron las suites web/PKCE y las **cuatro pruebas Android**, incluyendo navegador externo, callbacks frío/caliente y CRUD/importación/respaldo sin red. Se verificó la firma con apksigner antes de publicar.
+
+[Descargar APK 1.2](https://github.com/enriqueortizvasquez-prog/App-apuntes/releases/download/v1.2.0-beta/apuntes-android-v1.2.0-beta.apk): 1.251.238 bytes. SHA256 informado por GitHub para el archivo publicado: `b78dd8c8f350aab07f8c7dbef37372fe2403061cb01b295b643c8280a6ddf0cc`. Release pública no borrador, beta e inmutable. No se modificó la descarga anterior.
+
+**Esto no prueba el consentimiento de una cuenta Google real.** El proveedor sigue pendiente de configurar por el propietario; el APK comprueba ese estado y no simula un acceso. No publiques el secreto OAuth ni desactives la verificación de identidad.

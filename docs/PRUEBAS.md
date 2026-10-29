@@ -53,3 +53,9 @@ La prueba web móvil usa un viewport Chromium y el APK usa un emulador Android; 
 Se añadieron pruebas unitarias de PKCE S256, identidad mínima, exclusión de tokens Google, expiración, cancelación, proyecto/retorno equivocado, un solo uso y respuesta inválida. La suite de navegador usa fixtures controlados para comprobar intercambio, limpieza del historial, retorno tras reinicio e invitación conservada. **No es consentimiento real de Google**. La instrumentación Android comprueba el intent de navegador externo, rechazo de enlaces OAuth falsos, retorno frío/caliente y no repetición al recrear, además de CRUD/respaldo/importación offline. La publicación del APK 1.2 está condicionada al resultado real de su ejecución de Actions.
 
 El 29 de octubre se consultó Auth real: `external_google_enabled=false`, Client ID y secreto Google todavía sin configurar; retorno `apuntes://open` ya permitido y verificación de correo intacta. Hay que completar `GOOGLE.md` y probar dos identidades reales antes de declarar terminada la colaboración.
+
+### Resultado Android 1.2 confirmado
+
+[40944333232](https://github.com/enriqueortizvasquez-prog/App-apuntes/actions/runs/40944333232), revisión `55aa71757823fa294b4507173e44c9709c37c789`: **SUCCESS**. Compilación, suites web y cuatro pruebas instrumentadas, firma y publicación de la nueva beta 1.2 completadas. La primera ejecución 40943396262 detectó un retorno cálido que solo cambiaba el fragmento, sin recargar el WebView; se corrigió el manejo de hashchange y se añadió una regresión de navegador. La descarga no se publicó hasta pasar la ejecución corregida.
+
+El APK real pesa 1.251.238 bytes; su SHA256 es `b78dd8c8f350aab07f8c7dbef37372fe2403061cb01b295b643c8280a6ddf0cc`. Las dos ejecuciones generales de CI del mismo commit (40944333780 y 40944342815) también finalizaron correctamente. `npm audit` completo: 0 vulnerabilidades.
