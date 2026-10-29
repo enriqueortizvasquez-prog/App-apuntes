@@ -44,6 +44,6 @@ El cliente local, el adaptador y el esquema SQL acumulan **9 pruebas unitarias**
 
 ## Qué NO demuestra esto
 
-No se ha creado un proyecto Supabase real ni configurado correos, cuotas, dominio permanente o pagos de terceros. No se ha probado una cuenta real contra un servicio remoto. PGlite no sustituye verificar la configuración efectiva del proyecto Supabase y su Auth. Sigue la lista de comprobación de `COLABORACION.md` antes de activar el colaborativo para otros usuarios.
+El propietario creó un proyecto Supabase y autorizó la conexión. Ya se instaló el esquema y se ejecutó `tests/live-rls.sql` en su base real: sus comprobaciones pasaron y los fixtures se revirtieron. No se ha probado el registro por correo ni el acceso desde el APK con cuentas reales. No se han configurado SMTP propio, dominio permanente ni pagos de terceros. Consulta `SUPABASE-ACTIVACION.md`. PGlite no sustituye verificar la configuración efectiva del proyecto Supabase y su Auth. Sigue la lista de comprobación de `COLABORACION.md` antes de activar el colaborativo para otros usuarios.
 
 La prueba web móvil usa un viewport Chromium y el APK usa un emulador Android; no se ha probado en tu celular físico ni en un iPhone. La instalación requiere los mecanismos del navegador de cada dispositivo. Ninguna prueba garantiza recordatorios con la app cerrada: esa función no se ofrece.

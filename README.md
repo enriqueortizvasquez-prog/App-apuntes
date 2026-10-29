@@ -20,6 +20,10 @@ Una app gratuita para organizar los deberes de la universidad. Diseño **Grafito
 
 No se han añadido subtareas, comentarios ni recurrencias: quedaron fuera del alcance acordado.
 
+## Conexión con el proyecto real
+
+El esquema y los permisos ya se instalaron y probaron en el proyecto Supabase del propietario. El APK existente puede conectarse desde sus ajustes sin reinstalarlo. **Falta resolver el registro por correo y probar dos cuentas reales**: consulta [estado de activación y configuración pública](docs/SUPABASE-ACTIVACION.md).
+
 ## Android: APK instalable
 
 La versión **1.1.0-beta** añade un APK con la app incluida, almacenamiento local, respaldos nativos y enlaces que abre Android. La compilación se publica en [Releases](https://github.com/enriqueortizvasquez-prog/App-apuntes/releases/tag/v1.1.0-beta) solo tras superar las pruebas instrumentadas. Consulta [instalación, firma beta y límites](docs/ANDROID.md). **No se presenta como colaboración activa:** primero hay que conectar el servicio real.

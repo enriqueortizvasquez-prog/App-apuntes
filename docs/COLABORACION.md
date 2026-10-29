@@ -1,6 +1,6 @@
 # Activar colaboración real (opcional)
 
-La descarga funciona sin este paso. La app no crea una base de datos ni envía datos a un servicio mientras no se configure. El SQL y el cliente están incluidos; no se ha aprovisionado ni probado un proyecto real en nombre del usuario.
+La descarga funciona sin este paso. La app no crea una base de datos ni envía datos a un servicio mientras no se configure. El SQL y el cliente están incluidos. El 29 de octubre de 2026 se instaló y verificó el esquema en el proyecto real del propietario; consulta `SUPABASE-ACTIVACION.md` para el estado y los valores públicos de conexión. El registro de usuarios y la prueba con dos cuentas reales todavía están pendientes. Las instrucciones siguientes sirven también para instalar otro proyecto vacío.
 
 1. El propietario crea un proyecto Supabase y revisa sus cuotas/costos. La app no cobra una suscripción propia.
 2. En el editor SQL de un proyecto **vacío**, ejecuta `supabase/schema.sql` una vez. Es una transacción: si falla, se revierte. Si ya instalaste otra versión del esquema, no lo ejecutes encima sin una migración revisada.
