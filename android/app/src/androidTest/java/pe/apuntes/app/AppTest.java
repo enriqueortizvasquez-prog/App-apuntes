@@ -53,7 +53,7 @@ public class AppTest {
         Intents.init();
         try(ActivityScenario<MainActivity> scenario=ActivityScenario.launch(MainActivity.class)){
             scenario.onActivity(a->activity=a);
-            waitFor("!!document.querySelector('#install-app:disabled') && document.querySelector('#connection-status').textContent.includes('sin conexión')");
+            waitFor("!!document.querySelector('#install-app:disabled') && document.querySelector('#connection-status').textContent.toLowerCase().includes('sin conexión')");
             assertEquals("0",js("document.querySelectorAll('.task').length"));
             js("document.querySelector('[data-view=courses]').click();document.querySelector('#add-course').click();document.querySelector('#course-name').value='Física móvil';document.querySelector('#course-form').requestSubmit();");
             waitFor("document.querySelector('#courses-count').textContent==='1'");
