@@ -62,3 +62,20 @@ test("pegar nunca acepta OAuth, tokens de sesión, esquemas ejecutables o enlace
   ])
     assert.throws(() => parseInvitationText(text), String(text).slice(0, 60));
 });
+
+test("el esquema nativo no depende del soporte URL de un WebView", (t) => {
+  const original = globalThis.URL;
+  t.after(() => (globalThis.URL = original));
+  globalThis.URL = class extends original {
+    constructor(value) {
+      if (value.startsWith("apuntes:")) throw Error("non-special URI");
+      super(value);
+    }
+  };
+  assert.equal(parseInvitationText("apuntes://open" + hash).token, token);
+  const encoded = encodeInvitation({ title: "Copia" });
+  assert.equal(
+    parseInvitationText("apuntes://open#apuntes=" + encoded).encoded,
+    encoded,
+  );
+});

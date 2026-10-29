@@ -35,7 +35,7 @@ public class AppTest {
     private void waitFor(String expression) throws Exception {
         long end=System.currentTimeMillis()+20000;
         while(System.currentTimeMillis()<end){if("true".equals(js(expression)))return;Thread.sleep(150);}
-        fail("No se cumplió: "+expression+"; texto="+js("document.body?.innerText"));
+        fail("No se cumplió: "+expression+"; diagnóstico="+js("JSON.stringify({input:document.querySelector('#paste-invite-text')?.value,uri:(()=>{try{const u=new URL('apuntes://open#join=test');return [u.protocol,u.host,u.pathname,u.hash]}catch(e){return e.message}})(),agent:navigator.userAgent})")+"; texto="+js("document.body?.innerText"));
     }
     private void tap(String selector) throws Exception {
         js("document.querySelector("+JSONObject.quote(selector)+").scrollIntoView({block:'center'})");

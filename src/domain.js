@@ -143,22 +143,25 @@ export function parseInvitationText(text) {
     value = value.replace(/[.,;:!?)}\]>*]+$/, "");
     let hash;
     if (value.startsWith("#")) hash = value;
-    else {
+    else if (/^apuntes:\/\//i.test(value)) {
+      // Parse our fixed native scheme without depending on WebView URL's
+      // treatment of non-special schemes. No query, userinfo, port or path.
+      const native = /^apuntes:\/\/open\/?(#[^\s]+)$/i.exec(value);
+      if (!native) continue;
+      hash = native[1];
+    } else {
       let url;
       try {
         url = new URL(value);
       } catch {
         continue;
       }
-      if (url.username || url.password) continue;
-      if (url.protocol === "apuntes:") {
-        if (
-          url.host !== "open" ||
-          (url.pathname && url.pathname !== "/") ||
-          url.search
-        )
-          continue;
-      } else if (!["https:", "http:"].includes(url.protocol)) continue;
+      if (
+        url.username ||
+        url.password ||
+        !["https:", "http:"].includes(url.protocol)
+      )
+        continue;
       hash = url.hash;
     }
     if (hash.startsWith("#join=") && uuid.test(hash.slice(6)))
