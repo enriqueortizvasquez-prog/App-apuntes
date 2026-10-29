@@ -2165,5 +2165,8 @@ $("#cloud-config-form").addEventListener("submit", async (e) => {
   }
 });
 
+// A warm Android return may be a same-document fragment navigation, not a
+// reload. Handle both paths and scrub the callback before any async exchange.
+window.addEventListener("hashchange", resumeGoogleSignIn);
 // All dialogs and invitation handlers are ready before handling a browser return.
 resumeGoogleSignIn();

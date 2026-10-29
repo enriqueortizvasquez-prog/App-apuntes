@@ -204,6 +204,28 @@ export async function runOAuthTests(browser, root, track) {
       "#join=20000000-0000-0000-0000-000000000001",
     );
     assert.equal(exchanges, 2);
+    // Warm Android return: loadUrl with a fragment does not reload the document.
+    await native.click("#invite-dialog [data-close]");
+    await native.click("#sign-out");
+    expectedVerifier = "c".repeat(43);
+    await native.evaluate((v) => {
+      localStorage.setItem(
+        "apuntes-oauth-pending",
+        JSON.stringify({
+          verifier: v,
+          createdAt: Date.now(),
+          project: "https://test.supabase.co",
+          redirectTo: "apuntes://open",
+          returnHash: "",
+        }),
+      );
+      location.hash = "oauth=code=fixture-code";
+    }, expectedVerifier);
+    await native.waitForFunction(
+      () => !document.querySelector("#cloud-account").hidden,
+    );
+    assert.equal(await native.evaluate(() => location.hash), "");
+    assert.equal(exchanges, 3);
     console.log(
       "✓ OAuth UI (fixtures): proveedor pendiente, PKCE S256, retorno/limpieza, cancelación, rechazo de enlace falso, reinicio e invitación conservada. No prueba consentimiento real Google.",
     );

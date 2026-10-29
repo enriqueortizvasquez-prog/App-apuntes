@@ -72,7 +72,7 @@ public class AppTest {
         Intents.init();
         try(ActivityScenario<MainActivity> scenario=ActivityScenario.launch(MainActivity.class)) {
             scenario.onActivity(a->activity=a);
-            waitFor("!!document.querySelector('#sign-in-google')");
+            waitFor("!!document.querySelector('#install-app:disabled') && window.APUNTES_ANDROID===true");
             intending(hasAction(Intent.ACTION_VIEW)).respondWith(new Instrumentation.ActivityResult(Activity.RESULT_CANCELED,null));
             js("window.fetch=async()=>new Response(JSON.stringify({external:{google:true}}),{status:200,headers:{'Content-Type':'application/json'}});document.querySelector('#reset-demo').click();document.querySelector('#open-cloud').click();document.querySelector('#sign-in-google').click()");
             waitFor("!!localStorage.getItem('apuntes-oauth-pending') && document.querySelector('#cloud-message').textContent.includes('Continúa en Google')");
