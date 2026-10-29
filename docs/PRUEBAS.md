@@ -91,3 +91,13 @@ La publicación 1.4 depende del resultado de sus pruebas Android. No se da por h
 La ejecución [40962689887](https://github.com/enriqueortizvasquez-prog/App-apuntes/actions/runs/40962689887) de `1413fe925b8a06ab8fb3cb97a7dfa06406ab6102` finalizó correctamente: **20 unitarias/PGlite + suites web + 5 pruebas instrumentadas Android**, firma y publicación del APK. La ejecución inicial 40961756205 no publicó APK porque el analizador no reconoció el esquema propio en Android; se eliminó la dependencia de URL para ese protocolo y se añadió una regresión. El flujo corregido de copia y colaboración pegadas pasó en Android.
 
 APK publicado `tareas-android-v1.4.0-beta.apk`, 1.263.258 bytes, SHA256 `e6f5e168fab87d9f4d7e0167f4c42f08c23ec31664ffbc0d7d944ea41b111e4b`. Permanece pendiente confirmar la interacción manual desde WhatsApp y dos cuentas en celulares reales; no se modificó el backend ni se recuperaron secretos OAuth.
+
+### Confirmación manual del propietario — dos cuentas reales (29 de octubre de 2026)
+
+El propietario informó que, en dos dispositivos con cuentas Google distintas:
+
+- Añadir un deber colaborativo hace que aparezca en el segundo dispositivo.
+- Editar un deber existente también se refleja en el segundo dispositivo.
+- Completarlo cambia únicamente el progreso de la persona que lo marca, como está previsto.
+
+Esta es evidencia manual comunicada por el propietario, no una nueva ejecución automatizada ni una inspección de sus cuentas. Actualiza las menciones anteriores a sincronización y progreso entre dos cuentas como pendientes. No demuestra por separado el pegado del mensaje desde WhatsApp, todos los roles/permisos, la revocación de invitaciones ni los conflictos simultáneos; no se modificó código ni se publicó otro APK por esta confirmación.

@@ -1,5 +1,7 @@
 # Tareas
 
+> **Actualización — 29 de octubre de 2026:** el propietario confirmó la colaboración en dos dispositivos con **cuentas Google distintas**: crear y editar deberes se sincroniza, y completarlos mantiene el progreso individual. Las menciones posteriores a esta prueba como pendiente describen el estado anterior a esta confirmación. Esto no confirma por separado el pegado manual desde WhatsApp ni todos los casos de permisos.
+
 ## Novedades de 1.4
 
 - Icono de **estrella de cuatro puntas tipo rombo**, como la estrella del estado vacío, en Android y la web.

@@ -1,0 +1,44 @@
+name: Publicar ZIP de la web informativa
+on:
+  push:
+    branches: [arena/35b68c60-app-apuntes]
+    paths:
+      - 'web-info/**'
+      - 'tests/web-info.test.mjs'
+      - '.github/workflows/publicar-web-info.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: web-info-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Comprobar enlaces y contenido público
+        run: node --test tests/web-info.test.mjs
+      - name: Preparar ZIP sin carpetas contenedoras
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile, ZIP_DEFLATED
+          root = Path('web-info')
+          names = ['index.html', 'privacidad.html', 'condiciones.html', 'contacto.html', 'styles.css', 'icon.png', '_headers']
+          with ZipFile('tareas-web-cloudflare.zip', 'w', ZIP_DEFLATED) as z:
+              for name in names:
+                  z.write(root / name, name)
+          with ZipFile('tareas-web-cloudflare.zip') as z:
+              assert z.testzip() is None
+              assert sorted(z.namelist()) == sorted(names)
+          PY
+      - name: Añadir descarga pública sin reemplazar el APK
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: gh release upload v1.4.0-beta tareas-web-cloudflare.zip
