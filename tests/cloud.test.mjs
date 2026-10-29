@@ -59,6 +59,33 @@ test("errores remotos se propagan sin fingir una escritura local", async (t) => 
   await assert.rejects(c.deleteTask("x"), /No tienes permiso/);
 });
 
-test("solo se aceptan claves anon/publishable, no contraseñas o tokens ajenos",()=>{
- for(const key of ["contraseña_por_error","ghp_no_es_clave_publica","service_role"]){assert.equal(new Cloud({...cfg,supabaseKey:key}).configured,false);}
+test("solo se aceptan claves anon/publishable, no contraseñas o tokens ajenos", () => {
+  for (const key of [
+    "contraseña_por_error",
+    "ghp_no_es_clave_publica",
+    "service_role",
+  ]) {
+    assert.equal(new Cloud({ ...cfg, supabaseKey: key }).configured, false);
+  }
+});
+
+test("eliminar espacio usa RPC autenticado, sin identidad de propietario enviada por el cliente", async (t) => {
+  const original = globalThis.fetch;
+  t.after(() => (globalThis.fetch = original));
+  let request;
+  globalThis.fetch = async (url, options) => {
+    request = { url, options };
+    return new Response("null", { status: 200 });
+  };
+  const cloud = new Cloud(cfg);
+  await assert.rejects(cloud.deleteSpace("space"), /Inicia sesión/);
+  cloud.session = {
+    user: { id: "owner" },
+    access_token: "token",
+    expires_at: Date.now() / 1000 + 3600,
+  };
+  await cloud.deleteSpace("space");
+  assert.ok(request.url.endsWith("/rpc/delete_space"));
+  assert.deepEqual(JSON.parse(request.options.body), { p_space: "space" });
+  assert.equal(request.options.headers.Authorization, "Bearer token");
 });

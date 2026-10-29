@@ -32,6 +32,7 @@ const $ = (s) => document.querySelector(s),
     { id: "bio", name: "Biología", color: "#dcaebd" },
   ];
 let cloud = new Cloud();
+const spaceOperations = new Set();
 let cloudSpaces = [],
   cloudSyncing = false,
   lastCloudUser = cloud.session?.user?.id || null;
@@ -616,7 +617,16 @@ function renderCourses() {
     );
     const actions = el("div", "course-card-actions"),
       open = el("button", "text open-course", "Ver deberes →"),
-      remove = el("button", "text delete-course-button", "Eliminar");
+      remove = el(
+        "button",
+        "text delete-course-button",
+        c.remoteSpace
+          ? c.remoteOwner === cloud.session?.user?.id
+            ? "Eliminar para todos"
+            : "Abandonar"
+          : "Eliminar",
+      );
+    remove.disabled = spaceOperations.has(c.remoteSpace);
     open.dataset.course = c.id;
     open.setAttribute("aria-label", `Ver deberes de ${c.name}`);
     open.addEventListener("click", () => {
@@ -625,7 +635,7 @@ function renderCourses() {
       resetSearch();
       render();
     });
-    remove.setAttribute("aria-label", `Eliminar curso ${c.name}`);
+    remove.setAttribute("aria-label", `${remove.textContent} curso ${c.name}`);
     remove.addEventListener("click", () => openDeleteCourse(c));
     actions.append(open, remove);
     card.append(actions);
@@ -638,19 +648,57 @@ function openCourseDialog() {
   $("#course-dialog").showModal();
   $("#course-name").focus();
 }
+async function changeSharedSpace(space) {
+  const current = cloud,
+    user = current.session?.user?.id;
+  if (!user) return notify("Inicia sesión para gestionar este espacio.");
+  if (spaceOperations.has(space.id)) return;
+  const owned = space.owner_id === user;
+  const message = owned
+    ? `¿Eliminar «${space.title}» para todos? Se borrarán definitivamente el espacio compartido, sus deberes, los progresos de todos y las invitaciones. Tus compañeros perderán el acceso al sincronizar. Esta acción no se puede deshacer. Exporta un respaldo antes de continuar.`
+    : `¿Abandonar «${space.title}»? No se eliminarán el curso ni los deberes de los demás. Perderás el acceso y tu progreso en este espacio.`;
+  if (!confirm(message)) return;
+  spaceOperations.add(space.id);
+  renderCourses();
+  renderCloudAccount();
+  let changed = false;
+  try {
+    if (owned) await current.deleteSpace(space.id);
+    else await current.leave(space.id);
+    changed = true;
+    if (cloud !== current || current.session?.user?.id !== user) return;
+    // An older snapshot may still be in flight. Wait for it, then read again.
+    if (cloudSyncing) await cloudSyncing.catch(() => {});
+    if (cloud !== current || current.session?.user?.id !== user) return;
+    await syncCloud();
+    if (cloud === current && current.session?.user?.id === user)
+      notify(
+        owned
+          ? "Espacio y deberes compartidos eliminados para todos."
+          : "Has abandonado el espacio.",
+      );
+  } catch (e) {
+    if (cloud === current && current.session?.user?.id === user)
+      notify(
+        changed
+          ? "El cambio se guardó en el servidor, pero no se pudo actualizar la vista. Pulsa Sincronizar."
+          : e.message,
+      );
+  } finally {
+    spaceOperations.delete(space.id);
+    if (cloud === current && current.session?.user?.id === user) {
+      renderCourses();
+      renderCloudAccount();
+    }
+  }
+}
 function openDeleteCourse(c) {
   if (c.remoteSpace) {
-    if (
-      !confirm(
-        "¿Abandonar este curso compartido? No se eliminarán los deberes de los demás. El propietario debe conservar su espacio.",
-      )
-    )
-      return;
-    cloud
-      .leave(c.remoteSpace)
-      .then(() => syncCloud())
-      .then(() => notify("Has abandonado el curso."))
-      .catch((e) => notify(e.message));
+    changeSharedSpace({
+      id: c.remoteSpace,
+      title: c.name,
+      owner_id: c.remoteOwner,
+    });
     return;
   }
   deletingCourseId = c.id;
@@ -1856,23 +1904,16 @@ function renderCloudAccount() {
       members.addEventListener("click", () => showMembers(space.id));
       actions.append(revoke, members);
     }
-    if (space.owner_id !== cloud.session?.user.id) {
-      const leave = el("button", "text", "Abandonar");
-      leave.addEventListener("click", async () => {
-        if (
-          !confirm("¿Abandonar este espacio sin borrar los datos de los demás?")
-        )
-          return;
-        try {
-          await cloud.leave(space.id);
-          await syncCloud();
-          notify("Has abandonado el espacio.");
-        } catch (e) {
-          notify(e.message);
-        }
-      });
-      actions.append(leave);
-    }
+    const owned = space.owner_id === cloud.session?.user.id;
+    const remove = el(
+      "button",
+      "text " + (owned ? "delete-space" : "leave-space"),
+      owned ? "Eliminar para todos" : "Abandonar",
+    );
+    remove.dataset.space = space.id;
+    remove.disabled = spaceOperations.has(space.id);
+    remove.addEventListener("click", () => changeSharedSpace(space));
+    actions.append(remove);
     row.append(actions);
     $("#cloud-spaces").append(row);
   }

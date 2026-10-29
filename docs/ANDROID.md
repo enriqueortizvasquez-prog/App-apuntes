@@ -107,3 +107,13 @@ Antes de cambiar de APK beta, exporta respaldo; una firma diferente puede obliga
 [Descargar APK Tareas 1.4](https://github.com/enriqueortizvasquez-prog/App-apuntes/releases/download/v1.4.0-beta/tareas-android-v1.4.0-beta.apk): **1.263.258 bytes**, SHA256 de GitHub `e6f5e168fab87d9f4d7e0167f4c42f08c23ec31664ffbc0d7d944ea41b111e4b`. Firma verificada con apksigner antes de publicar. Release pública, beta y no borrador; no se reemplazaron las descargas anteriores.
 
 La prueba entre dos cuentas reales y pegar manualmente desde WhatsApp en el celular siguen pendientes de confirmar con el propietario/receptor. Las pruebas no convierten los enlaces en pulsables en WhatsApp; permiten abrirlos pegándolos en Tareas. No hace falta volver a configurar Google.
+
+## Tareas 1.5 beta — eliminar para todos
+
+La opción Eliminar de un curso compartido intentaba `leave_space` incluso para su propietario. Ahora el propietario ve **Eliminar para todos**, tanto en Cursos como en Cuenta y colaboración. Una confirmación explica el borrado definitivo del espacio, deberes compartidos, progresos e invitaciones. Los demás ven **Abandonar**, que no elimina los datos de los otros participantes. El servidor exige ser el propietario real, no basta ser administrador.
+
+Backend actualizado con `delete_shared_space_owner_only`, sin borrar cursos reales. Verificación transaccional `tests/live-delete-space.sql` PASS en el servicio real con todas las fixtures revertidas. Los clientes anteriores pueden seguir leyendo y sincronizando; necesitan 1.5 para usar el nuevo botón de eliminación. Tras borrar, los otros dispositivos lo retiran al sincronizar (manualmente o mediante la actualización periódica existente).
+
+La versión 1.5 usa versionCode 6 y conserva `pe.apuntes.app`, el retorno OAuth y almacenamiento. No cambies credenciales ni configures Google de nuevo. Exporta respaldo antes de instalar: la firma debug puede obligar a desinstalar e importar después. No se garantiza actualización sobre la beta anterior.
+
+La publicación se condiciona a pruebas web, 23 pruebas unitarias/PGlite y seis pruebas instrumentadas en Android 35, incluida confirmación/cancelación del borrado con API controlada. Los resultados y descarga final se registrarán tras finalizar CI. La eliminación manual en el celular del propietario todavía no se ha confirmado.

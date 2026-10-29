@@ -36,3 +36,7 @@ Exporta desde Ajustes. Puedes eliminar deberes/cursos mediante la interfaz. Para
 ## APK Android
 
 La app se empaqueta con los mismos archivos gráficos y no carga una web remota al iniciar. La caché/almacenamiento del APK está separada de Chrome. El APK no activa copias automáticas de Android; tú eliges dónde exportar tu JSON con el selector del sistema. Importar solo permite leer el archivo que selecciones. No pide acceso general al almacenamiento, contactos, ubicación, cámara ni micrófono. Las referencias externas se abren fuera de la vista local con acceso al guardado nativo. La configuración pública del servicio se guarda localmente en este dispositivo y no se incluye en los respaldos.
+
+## Eliminación de espacios compartidos (1.5)
+
+El propietario puede eliminar un espacio para todos con confirmación explícita. Se borran sus deberes compartidos, pertenencias, invitaciones y progresos asociados en el servidor. Esto no borra cuentas Google ni Supabase, otros espacios, copias independientes o respaldos ya exportados. Los demás dispositivos retiran el contenido de su vista al sincronizar; no se garantiza borrado de cachés offline. Los participantes no propietarios solo pueden abandonar el espacio sin borrar el contenido de los demás.

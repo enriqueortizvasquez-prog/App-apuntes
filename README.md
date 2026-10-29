@@ -1,5 +1,9 @@
 # Tareas
 
+> **Tareas 1.5 beta — eliminar un curso compartido:** el propietario puede elegir «Eliminar para todos» y confirmar el borrado del espacio, deberes, progresos e invitaciones. Los demás participantes solo pueden abandonarlo. [APK 1.5](https://github.com/enriqueortizvasquez-prog/App-apuntes/releases/download/v1.5.0-beta/tareas-android-v1.5.0-beta.apk) (se publica tras superar las pruebas Android). Antes de cambiar de APK beta, exporta respaldo.
+
+> **Acceso público confirmado por el propietario:** Google pasó a producción y una cuenta ajena a la lista de prueba pudo entrar. Web informativa publicada: https://tarea-dij.pages.dev/. Esto no acredita por sí solo verificación de marca de Google. Los avisos de proveedor/pruebas pendientes que figuran en secciones históricas describen estados anteriores.
+
 > **Actualización — 29 de octubre de 2026:** el propietario confirmó la colaboración en dos dispositivos con **cuentas Google distintas**: crear y editar deberes se sincroniza, y completarlos mantiene el progreso individual. Las menciones posteriores a esta prueba como pendiente describen el estado anterior a esta confirmación. Esto no confirma por separado el pegado manual desde WhatsApp ni todos los casos de permisos.
 
 ## Novedades de 1.4

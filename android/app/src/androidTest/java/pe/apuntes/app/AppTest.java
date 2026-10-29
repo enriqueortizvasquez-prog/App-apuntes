@@ -49,6 +49,37 @@ public class AppTest {
         android.view.MotionEvent up=android.view.MotionEvent.obtain(now,now+80,android.view.MotionEvent.ACTION_UP,x,y,0);
         InstrumentationRegistry.getInstrumentation().sendPointerSync(down);InstrumentationRegistry.getInstrumentation().sendPointerSync(up);down.recycle();up.recycle();
     }
+    @Test public void deleteOwnedSharedCourseIsConfirmedAndRemovesData() throws Exception {
+        try(ActivityScenario<MainActivity> scenario=ActivityScenario.launch(MainActivity.class)) {
+            scenario.onActivity(a->activity=a);
+            waitFor("!!document.querySelector('#install-app:disabled')");
+            js("""
+                window.deleteCalls=0;window.sharedDeleted=false;window.deleteConfirm=false;
+                window.confirm=text=>{window.deleteWarning=text;return window.deleteConfirm};
+                window.fetch=async(url,options)=>{
+                  let data=[];const path=new URL(url).pathname;
+                  if(path.endsWith('/auth/v1/token'))data={user:{id:'10000000-0000-0000-0000-000000000001',email:'owner@example.com'},access_token:'fixture-token',refresh_token:'fixture-refresh',expires_at:Date.now()/1000+3600};
+                  else if(path.endsWith('/rpc/delete_space')){window.deleteCalls++;window.sharedDeleted=true;data=null;}
+                  else if(path.endsWith('/shared_spaces'))data=window.sharedDeleted?[]:[{id:'20000000-0000-0000-0000-000000000001',owner_id:'10000000-0000-0000-0000-000000000001',title:'Curso para eliminar',kind:'course'}];
+                  else if(path.endsWith('/shared_tasks'))data=window.sharedDeleted?[]:[{id:'30000000-0000-0000-0000-000000000001',space_id:'20000000-0000-0000-0000-000000000001',title:'Deber compartido para eliminar',course_name:'Curso para eliminar',color:'#a9c2e8',due:'2030-01-01',due_time:'18:00:00',priority:'normal',notes:'',link:'',version:1}];
+                  else if(path.endsWith('/space_members'))data=window.sharedDeleted?[]:[{space_id:'20000000-0000-0000-0000-000000000001',user_id:'10000000-0000-0000-0000-000000000001',role:'admin'}];
+                  else if(!path.endsWith('/task_progress')&&!path.endsWith('/auth/v1/logout'))throw Error('Ruta no esperada: '+path);
+                  return new Response(JSON.stringify(data),{status:200,headers:{'Content-Type':'application/json'}});
+                };
+                document.querySelector('#reset-demo').click();document.querySelector('#open-cloud').click();
+                document.querySelector('#auth-email').value='owner@example.com';document.querySelector('#auth-password').value='fixturepassword';document.querySelector('#auth-form').requestSubmit();
+                """);
+            waitFor("!!document.querySelector('.delete-space') && JSON.parse(localStorage.getItem('apuntes-v1')).tasks.some(t=>t.remoteId)");
+            js("document.querySelector('#cloud-dialog [data-close]').click();document.querySelector('#settings-dialog [data-close]').click();document.querySelector('[data-view=courses]').click();Array.from(document.querySelectorAll('.delete-course-button')).find(b=>b.textContent==='Eliminar para todos').click()");
+            assertEquals("0",js("window.deleteCalls"));
+            assertEquals("true",js("window.deleteWarning.includes('para todos') && window.deleteWarning.includes('progresos de todos') && window.deleteWarning.includes('no se puede deshacer')"));
+            js("window.deleteConfirm=true;Array.from(document.querySelectorAll('.delete-course-button')).find(b=>b.textContent==='Eliminar para todos').click()");
+            waitFor("window.deleteCalls===1 && !JSON.parse(localStorage.getItem('apuntes-v1')).courses.some(c=>c.remoteSpace) && !JSON.parse(localStorage.getItem('apuntes-v1')).tasks.some(t=>t.remoteId)");
+            assertEquals("true",js("document.querySelector('#toast-text').textContent.includes('eliminados para todos')"));
+            js("document.querySelector('#reset-demo').click();document.querySelector('#open-cloud').click();document.querySelector('#sign-out').click()");
+            waitFor("!sessionStorage.getItem('apuntes-session')");
+        }
+    }
     @Test public void strictOAuthCallbackRouting() {
         assertEquals("oauth=code=valid-code_123", MainActivity.navigationFragment(Uri.parse("apuntes://open?code=valid-code_123")));
         assertEquals("oauth=error=cancelled", MainActivity.navigationFragment(Uri.parse("apuntes://open?error=access_denied&error_description=private")));

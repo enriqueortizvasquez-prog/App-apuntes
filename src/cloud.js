@@ -203,6 +203,9 @@ export class Cloud {
   deleteTask(id) {
     return this.rpc("delete_shared_task", { p_task: id });
   }
+  deleteSpace(space) {
+    return this.rpc("delete_space", { p_space: space });
+  }
   revoke(space) {
     return this.rpc("revoke_invites", { p_space: space });
   }

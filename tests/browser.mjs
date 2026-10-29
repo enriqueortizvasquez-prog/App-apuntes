@@ -4,7 +4,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { pathToFileURL } from "node:url";
 import path from "node:path";
 import { browser } from "../scripts/browser-util.mjs";
-import { runCloudTests } from "./cloud-browser.mjs";
+import { runCloudTests, runDeleteSpaceTests } from "./cloud-browser.mjs";
 import { runNativeTests } from "./native-browser.mjs";
 import { runOAuthTests } from "./oauth-browser.mjs";
 import { runBrandingTests } from "./branding-browser.mjs";
@@ -308,6 +308,7 @@ try {
   await portable.reload({ waitUntil: "networkidle0" });
   assert.equal(await portable.$$eval("#task-list .task", (es) => es.length), 4);
   await runCloudTests(b, root, track);
+  await runDeleteSpaceTests(b, root, track);
   await runNativeTests(b, root, track);
   await runOAuthTests(b, root, track);
   await runBrandingTests(b, root, track);

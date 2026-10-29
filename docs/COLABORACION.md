@@ -43,3 +43,13 @@ Los permisos se comprueban en el servidor, no solo ocultando botones. Las claves
 7. Prueba el consentimiento Google, cancelación, regreso al APK, acceso, cierre/renovación de sesión y errores de red. Si habilitas el método de correo, comprueba además su confirmación/recuperación y SMTP.
 
 Las pruebas automáticas verifican el cliente con respuestas controladas y ejecutan el esquema SQL y sus permisos en PostgreSQL embebido (PGlite); no sustituyen estas pruebas contra el servicio real configurado por el propietario.
+
+## Eliminar un espacio compartido (1.5)
+
+- **Propietario:** Cursos → Eliminar para todos, o Cuenta y colaboración → Eliminar para todos. Confirma solo si quieres borrar el espacio compartido, sus deberes y todos los progresos. Las invitaciones quedan inválidas. Exporta respaldo previamente; no hay deshacer.
+- **Otros participantes, incluidos administradores no propietarios:** Abandonar solo retira su acceso y progreso, sin destruir el espacio.
+- Los cursos y deberes locales independientes se conservan. Si un curso contenía además deberes locales ajenos al espacio, estos no se eliminan.
+- Una copia independiente ya importada no se puede borrar remotamente. Un dispositivo sin conexión puede mostrar la caché anterior hasta sincronizar; no se promete borrado remoto del almacenamiento de un equipo offline.
+- Para instalar en otro proyecto existente, aplica `supabase/migrations/20261029_delete_space.sql` una vez como administrador. El proyecto del propietario ya recibió la migración; no repitas `schema.sql` sobre una instalación con datos.
+
+Estado actual comunicado por el propietario: dos cuentas reales sincronizan altas/ediciones y mantienen progreso individual; Google en producción permite entrar a una cuenta no añadida a usuarios de prueba. No se modificó OAuth para esta corrección.

@@ -152,4 +152,18 @@ end;$$;
 revoke all on function public.is_member(uuid),public.is_admin(uuid),public.add_shared_task(uuid,jsonb),public.create_space(text,text,jsonb),public.create_invite(uuid,text),public.preview_invite(uuid),public.accept_invite(uuid),public.set_task_progress(uuid,boolean),public.update_shared_task(uuid,integer,jsonb),public.delete_shared_task(uuid),public.revoke_invites(uuid),public.leave_space(uuid),public.list_members(uuid),public.change_member(uuid,uuid,text) from public,anon;
 grant execute on function public.is_member(uuid),public.is_admin(uuid),public.add_shared_task(uuid,jsonb),public.create_space(text,text,jsonb),public.create_invite(uuid,text),public.accept_invite(uuid),public.set_task_progress(uuid,boolean),public.update_shared_task(uuid,integer,jsonb),public.delete_shared_task(uuid),public.revoke_invites(uuid),public.leave_space(uuid),public.list_members(uuid),public.change_member(uuid,uuid,text) to authenticated;
 grant execute on function public.preview_invite(uuid) to anon,authenticated;
+-- Only the owner may destroy a shared space. Cascades are defined in schema.sql.
+create or replace function public.delete_space(p_space uuid) returns void
+language plpgsql security definer set search_path=public as $$
+begin
+  if auth.uid() is null then raise exception 'Inicia sesión.'; end if;
+  delete from public.shared_spaces where id=p_space and owner_id=auth.uid();
+  if not found then
+    raise exception 'Solo el propietario puede eliminar este espacio, o ya no existe.';
+  end if;
+end;
+$$;
+revoke all on function public.delete_space(uuid) from public, anon;
+grant execute on function public.delete_space(uuid) to authenticated;
+
 commit;

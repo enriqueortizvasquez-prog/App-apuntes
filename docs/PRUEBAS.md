@@ -101,3 +101,11 @@ El propietario informó que, en dos dispositivos con cuentas Google distintas:
 - Completarlo cambia únicamente el progreso de la persona que lo marca, como está previsto.
 
 Esta es evidencia manual comunicada por el propietario, no una nueva ejecución automatizada ni una inspección de sus cuentas. Actualiza las menciones anteriores a sincronización y progreso entre dos cuentas como pendientes. No demuestra por separado el pegado del mensaje desde WhatsApp, todos los roles/permisos, la revocación de invitaciones ni los conflictos simultáneos; no se modificó código ni se publicó otro APK por esta confirmación.
+
+## Corrección 1.5 — propietario elimina el espacio
+
+- 23 pruebas unitarias/PGlite: RPC autenticado sin identidad suplantable, solo propietario puede eliminar; miembro, administrador no propietario, extraño y anónimo rechazados; tabla no escribible directamente; eliminación completa de las dependencias e invitación invalidada; otro curso conservado.
+- Prueba de interfaz con dos sesiones/API controlada: etiquetas por propietario, confirmación explícita, cancelación sin petición, error sin borrar caché, doble clic bloqueado, eliminación reflejada en el segundo usuario al sincronizar y datos locales conservados.
+- `tests/live-delete-space.sql`: **PASS en el proyecto real**, con usuarios/espacios/deberes de prueba dentro de subtransacción revertida. No se eliminó ningún curso real del propietario.
+- Nueva prueba Android de propietario, cancelación/confirmación y retirada de la instantánea. La compilación/publicación 1.5 está condicionada a CI; se registrará el resultado por separado.
+- El propietario confirmó también una cuenta nueva fuera de la lista de prueba después de publicar Google en producción. No es evidencia de marca verificada ni sustituye probar manualmente el nuevo borrado en su celular.
